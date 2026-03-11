@@ -1,0 +1,1777 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PMGO - Sistema de Parte Diária</title>
+    <!-- Fontes e ícones -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- HTML2PDF para exportação -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f0f2f5;
+            padding: 20px;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+
+        
+
+        /* Header */
+
+        
+        .app-header {
+            background: #0b2b5c;
+            color: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .app-header h1 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .app-header h1 i {
+            color: #ffd700;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        /* Cards de formulário */
+        .form-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .form-section h2 {
+            color: #0b2b5c;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 15px;
+        }
+
+        .form-section h3 {
+            color: #1e293b;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 20px 0 15px;
+            padding-left: 10px;
+            border-left: 4px solid #2563eb;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            font-size: 13px;
+            color: #475569;
+        }
+
+        .form-group input, 
+        .form-group select, 
+        .form-group textarea {
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+        }
+
+        .btn-add {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 5px;
+        }
+
+        .btn-add:hover {
+            background: #059669;
+        }
+
+        .btn-save {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .btn-save:hover {
+            background: #1d4ed8;
+        }
+
+        /* Tabelas */
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            overflow-x: auto;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #0b2b5c;
+            font-weight: 600;
+            padding: 10px;
+            text-align: left;
+            border-bottom: 2px solid #2563eb;
+            font-size: 12px;
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        tr:hover {
+            background: #f1f5f9;
+        }
+
+        .badge {
+            background: #2563eb;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .remove-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .remove-btn:hover {
+            background: #dc2626;
+        }
+
+        .historico-item {
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .historico-item:hover {
+            background: #e2e8f0;
+            transform: translateX(5px);
+        }
+
+        .historico-item td:first-child {
+            color: #2563eb;
+            font-weight: 600;
+        }
+
+        /* Parte Diária Visualização */
+        .parte-diaria {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .header-parte {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #0b2b5c;
+            padding-bottom: 20px;
+        }
+
+        .header-parte h3 {
+            color: #0b2b5c;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .header-parte h4 {
+            color: #1e293b;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .info-parte {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .info-parte div {
+            font-size: 14px;
+        }
+
+        .info-parte strong {
+            color: #0b2b5c;
+        }
+
+        .signature-section {
+            margin-top: 40px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .signature {
+            text-align: center;
+        }
+
+        .signature p {
+            margin-top: 40px;
+            font-weight: 600;
+            border-top: 1px solid #000;
+            padding-top: 10px;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            animation: slideIn 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 9999;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Data header */
+        .data-header {
+            background: #f8fafc;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .data-header .form-group {
+            min-width: 200px;
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .app-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .header-controls {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .signature-section {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .parte-diaria {
+                padding: 20px;
+            }
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            flex: 1;
+            text-align: center;
+            min-width: 140px;
+        }
+
+        .tab.active {
+            background: #0b2b5c;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .viatura-section {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .inline-form {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .inline-form .form-group {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .historico-table {
+            margin-top: 30px;
+            border-top: 2px solid #2563eb;
+        }
+
+        .current-day-badge {
+            background: #10b981;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .observacao-textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: vertical;
+        }
+
+        .observacao-textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+        }
+
+        .observacao-preview {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="app-header">
+            <h1>
+                <i class="fas fa-shield-halos"></i>
+                PMGO - Sistema de Parte Diária
+            </h1>
+            <div class="header-controls">
+                <button id="exportPDF" class="btn-primary">
+                    <i class="fas fa-file-pdf"></i>
+                    Gerar PDF
+                </button>
+                <button id="novoDia" class="btn-success">
+                    <i class="fas fa-calendar-plus"></i>
+                    Novo Dia
+                </button>
+            </div>
+        </div>
+
+        <!-- Info do Dia Atual -->
+        <div class="data-header">
+            <div class="form-group">
+                <label>Nº da Parte Diária</label>
+                <input type="text" id="numeroParte" placeholder="Ex: 86/2026">
+            </div>
+            <div class="form-group">
+                <label>Data Início</label>
+                <input type="text" id="dataInicio" placeholder="Ex: 20/1/2026">
+            </div>
+            <div class="form-group">
+                <label>Data Fim</label>
+                <input type="text" id="dataFim" placeholder="Ex: 22/1/2026">
+            </div>
+            <div class="form-group">
+                <label>Responsável</label>
+                <input type="text" id="responsavel" placeholder="Nome do responsável">
+            </div>
+            <div class="form-group">
+                <label>Comandante</label>
+                <input type="text" id="comandante" placeholder="Nome do comandante">
+            </div>
+        </div>
+
+        <!-- Tabs de Navegação -->
+        <div class="tabs">
+            <div class="tab active" data-tab="view">📋 Visualizar Parte</div>
+            <div class="tab" data-tab="vtr-comando">🚓 Vtr Comando</div>
+            <div class="tab" data-tab="vtr-area">🚔 Vtr Área</div>
+            <div class="tab" data-tab="extra">💰 Serviço Extra</div>
+            <div class="tab" data-tab="ocorrencias">📝 Ocorrências</div>
+            <div class="tab" data-tab="produtividade">📊 Produtividade</div>
+            <div class="tab" data-tab="observacoes">📌 Observações</div>
+            <div class="tab" data-tab="historico">📅 Histórico</div>
+        </div>
+
+        <!-- Aba: Visualização da Parte Diária -->
+        <div id="tab-view" class="tab-content active">
+            <div id="parteDiaria" class="parte-diaria">
+                <!-- Conteúdo será preenchido dinamicamente -->
+            </div>
+        </div>
+
+        <!-- Aba: Viatura de Comando -->
+        <div id="tab-vtr-comando" class="tab-content">
+            <div class="form-section">
+                <h2><i class="fas fa-car"></i> Viatura do Comando do 2º Pelotão (Expediente)</h2>
+                
+                <div class="viatura-section">
+                    <h3>Adicionar Militar - Vtr Comando</h3>
+                    <div class="inline-form">
+                        <div class="form-group">
+                            <label>Posto/Grad</label>
+                            <select id="postoComando">
+                                <option value="ST">ST - Subtenente</option>
+                                <option value="1º SGT">1º SGT</option>
+                                <option value="2º SGT">2º SGT</option>
+                                <option value="3º SGT">3º SGT</option>
+                                <option value="CB">CB</option>
+                                <option value="SD">SD</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>RG</label>
+                            <input type="text" id="rgComando" placeholder="Ex: 26.224">
+                        </div>
+                        <div class="form-group">
+                            <label>Nome de Guerra</label>
+                            <input type="text" id="nomeComando" placeholder="Ex: LOPES">
+                        </div>
+                        <div class="form-group">
+                            <label>Função</label>
+                            <select id="funcaoComando">
+                                <option value="Comandante">Comandante</option>
+                                <option value="Motorista">Motorista</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Horário</label>
+                            <input type="text" id="horarioComando" placeholder="Ex: 08:00 às 18:00">
+                        </div>
+                        <button onclick="adicionarVtrComando()" class="btn-add">
+                            <i class="fas fa-plus"></i> Adicionar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <h3>Efetivo - Viatura de Comando</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Posto/Grad</th>
+                                <th>RG</th>
+                                <th>Nome de Guerra</th>
+                                <th>Função</th>
+                                <th>Horário</th>
+                                <th>AC4</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vtrComandoBody">
+                            <!-- Dados inseridos aparecerão aqui -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aba: Viatura de Área -->
+        <div id="tab-vtr-area" class="tab-content">
+            <div class="form-section">
+                <h2><i class="fas fa-truck"></i> Viatura de Área</h2>
+                
+                <div class="viatura-section">
+                    <h3>Adicionar Militar - Vtr Área</h3>
+                    <div class="inline-form">
+                        <div class="form-group">
+                            <label>Posto/Grad</label>
+                            <select id="postoArea">
+                                <option value="ST">ST</option>
+                                <option value="1º SGT">1º SGT</option>
+                                <option value="2º SGT">2º SGT</option>
+                                <option value="3º SGT">3º SGT</option>
+                                <option value="CB">CB</option>
+                                <option value="SD">SD</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>RG</label>
+                            <input type="text" id="rgArea" placeholder="Ex: 32117">
+                        </div>
+                        <div class="form-group">
+                            <label>Nome de Guerra</label>
+                            <input type="text" id="nomeArea" placeholder="Ex: CRAVEIRO">
+                        </div>
+                        <div class="form-group">
+                            <label>Função</label>
+                            <select id="funcaoArea">
+                                <option value="Comandante">Comandante</option>
+                                <option value="Motorista">Motorista</option>
+                                <option value="Patrulheiro">Patrulheiro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Horário</label>
+                            <input type="text" id="horarioArea" placeholder="Ex: 08:00h às 08:00h">
+                        </div>
+                        <button onclick="adicionarVtrArea()" class="btn-add">
+                            <i class="fas fa-plus"></i> Adicionar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <h3>Efetivo - Viatura de Área</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Posto/Grad</th>
+                                <th>RG</th>
+                                <th>Nome de Guerra</th>
+                                <th>Função</th>
+                                <th>Horário</th>
+                                <th>AC4</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vtrAreaBody">
+                            <!-- Dados inseridos aparecerão aqui -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aba: Serviço Extra-Remunerado -->
+        <div id="tab-extra" class="tab-content">
+            <div class="form-section">
+                <h2><i class="fas fa-money-bill-wave"></i> Serviço Extra-Remunerado</h2>
+                
+                <div class="viatura-section">
+                    <h3>Adicionar Militar - Serviço Extra</h3>
+                    <div class="inline-form">
+                        <div class="form-group">
+                            <label>Posto/Grad</label>
+                            <select id="postoExtra">
+                                <option value="ST">ST</option>
+                                <option value="1º SGT">1º SGT</option>
+                                <option value="2º SGT">2º SGT</option>
+                                <option value="3º SGT">3º SGT</option>
+                                <option value="CB">CB</option>
+                                <option value="SD">SD</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>RG</label>
+                            <input type="text" id="rgExtra" placeholder="Ex: 12345">
+                        </div>
+                        <div class="form-group">
+                            <label>Nome de Guerra</label>
+                            <input type="text" id="nomeExtra" placeholder="Ex: SILVA">
+                        </div>
+                        <div class="form-group">
+                            <label>Função</label>
+                            <input type="text" id="funcaoExtra" placeholder="Ex: Segurança">
+                        </div>
+                        <div class="form-group">
+                            <label>Horário</label>
+                            <input type="text" id="horarioExtra" placeholder="Ex: 18:00 às 00:00">
+                        </div>
+                        <button onclick="adicionarServicoExtra()" class="btn-add">
+                            <i class="fas fa-plus"></i> Adicionar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <h3>Efetivo - Serviço Extra-Remunerado</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Posto/Grad</th>
+                                <th>RG</th>
+                                <th>Nome de Guerra</th>
+                                <th>Função</th>
+                                <th>Horário</th>
+                                <th>AC4</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="servicoExtraBody">
+                            <!-- Dados inseridos aparecerão aqui -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aba: Ocorrências -->
+        <div id="tab-ocorrencias" class="tab-content">
+            <div class="form-section">
+                <h2><i class="fas fa-file-alt"></i> Registrar Ocorrência</h2>
+                
+                <div class="viatura-section">
+                    <h3>Nova Ocorrência</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>RAI</label>
+                            <input type="text" id="rai" placeholder="Ex: 45638405">
+                        </div>
+                        <div class="form-group">
+                            <label>Natureza</label>
+                            <input type="text" id="natureza" placeholder="Ex: abordagem a pessoa">
+                        </div>
+                        <div class="form-group">
+                            <label>Setor</label>
+                            <input type="text" id="setor" placeholder="Ex: gleba s">
+                        </div>
+                        <div class="form-group">
+                            <label>Horário</label>
+                            <input type="text" id="horarioOcorrencia" placeholder="Ex: 21:00">
+                        </div>
+                        <div class="form-group">
+                            <label>APF/TCO/BOC</label>
+                            <input type="text" id="apf" placeholder="Ex: APF 001/2026">
+                        </div>
+                    </div>
+                    <button onclick="adicionarOcorrencia()" class="btn-add">
+                        <i class="fas fa-plus-circle"></i>
+                        Adicionar Ocorrência
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <h3>Ocorrências Registradas</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>RAI</th>
+                                <th>Natureza</th>
+                                <th>Setor</th>
+                                <th>Horário</th>
+                                <th>APF/TCO/BOC</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ocorrenciasBody">
+                            <!-- Ocorrências inseridas aparecerão aqui -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aba: Produtividade -->
+        <div id="tab-produtividade" class="tab-content">
+            <div class="form-section">
+                <h2><i class="fas fa-chart-bar"></i> Produtividade</h2>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Patrulhamento</label>
+                        <input type="number" id="patrulhamento" value="0" min="0" class="prod-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Ponto Base/Ronda</label>
+                        <input type="number" id="pontoBase" value="0" min="0" class="prod-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Averiguação</label>
+                        <input type="number" id="averiguacao" value="0" min="0" class="prod-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Monitoramento</label>
+                        <input type="number" id="monitoramento" value="0" min="0" class="prod-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Abordagem à pessoa</label>
+                        <input type="number" id="abordagemPessoa" value="0" min="0" class="prod-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Abordagem veículo</label>
+                        <input type="number" id="abordagemVeiculo" value="0" min="0" class="prod-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Abordagem comércio</label>
+                        <input type="number" id="abordagemComercio" value="0" min="0" class="prod-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Visita Solidária</label>
+                        <input type="number" id="visitaSolidaria" value="0" min="0" class="prod-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Visita Comunitária</label>
+                        <input type="number" id="visitaComunitaria" value="0" min="0" class="prod-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Visita Hospitalar</label>
+                        <input type="number" id="visitaHospitalar" value="0" min="0" class="prod-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Pontos de Bloqueio</label>
+                        <input type="number" id="pontosBloqueio" value="0" min="0" class="prod-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Auto de Retenção</label>
+                        <input type="number" id="autoRetencao" value="0" min="0" class="prod-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Apoio Policial</label>
+                        <input type="number" id="apoioPolicial" value="0" min="0" class="prod-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Acom. Medidas Protetivas</label>
+                        <input type="number" id="acomMedidas" value="0" min="0" class="prod-input">
+                    </div>
+                </div>
+                
+                <button onclick="salvarProdutividade()" class="btn-save">
+                    <i class="fas fa-save"></i>
+                    Salvar Produtividade
+                </button>
+            </div>
+        </div>
+
+        <!-- Aba: Observações -->
+        <div id="tab-observacoes" class="tab-content">
+            <div class="form-section">
+                <h2><i class="fas fa-pen"></i> 4. SUGESTÕES/ OBSERVAÇÕES/ ALTERAÇÕES DO SERVIÇO</h2>
+                
+                <div class="viatura-section">
+                    <h3>VEÍCULOS QUE SE ENCONTRAM NO PÁTIO</h3>
+                    <textarea id="observacoesVeiculos" class="observacao-textarea" placeholder="Descreva a situação dos veículos apreendidos, guinchos, etc..."></textarea>
+                </div>
+
+                <div class="viatura-section">
+                    <h3>ORDENS DE SERVIÇO</h3>
+                    <textarea id="observacoesOrdens" class="observacao-textarea" placeholder="Descreva as ordens de serviço do dia..."></textarea>
+                </div>
+
+                <div class="viatura-section">
+                    <h3>OUTRAS OBSERVAÇÕES</h3>
+                    <textarea id="observacoesGerais" class="observacao-textarea" placeholder="Outras observações relevantes..."></textarea>
+                </div>
+
+                <div class="viatura-section">
+                    <h3>Preview das Observações</h3>
+                    <div id="observacoesPreview" class="observacao-preview">
+                        As observações aparecerão aqui em tempo real...
+                    </div>
+                </div>
+
+                <button onclick="salvarObservacoes()" class="btn-save">
+                    <i class="fas fa-save"></i>
+                    Salvar Observações
+                </button>
+            </div>
+        </div>
+
+        <!-- Aba: Histórico -->
+        <div id="tab-historico" class="tab-content">
+            <div class="form-section">
+                <h2><i class="fas fa-history"></i> Histórico de Partes Diárias</h2>
+                
+                <div class="table-container historico-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Nº Parte</th>
+                                <th>Responsável</th>
+                                <th>Qtd Efetivo</th>
+                                <th>Qtd Ocorrências</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historicoBody">
+                            <!-- Histórico será carregado aqui -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="margin-top: 20px; padding: 20px; background: #f8fafc; border-radius: 8px;">
+                    <h3>Instruções:</h3>
+                    <p>• Clique em qualquer linha do histórico para carregar os dados daquele dia</p>
+                    <p>• O dia atual é marcado com um badge verde</p>
+                    <p>• Os dados são salvos automaticamente no seu navegador</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Estado inicial vazio
+        let dadosParteDiaria = {
+            id: Date.now(),
+            numero: "",
+            sei: "",
+            dataInicio: "",
+            dataFim: "",
+            responsavel: "",
+            comandante: "",
+            vtrComando: [],
+            vtrArea: [],
+            servicoExtra: [],
+            ocorrencias: [],
+            produtividade: {
+                patrulhamento: 0,
+                pontoBase: 0,
+                averiguacao: 0,
+                monitoramento: 0,
+                abordagemPessoa: 0,
+                abordagemVeiculo: 0,
+                abordagemComercio: 0,
+                visitaSolidaria: 0,
+                visitaComunitaria: 0,
+                visitaHospitalar: 0,
+                pontosBloqueio: 0,
+                autoRetencao: 0,
+                apoioPolicial: 0,
+                acomMedidas: 0
+            },
+            observacoes: {
+                veiculos: "",
+                ordens: "NÃO HOUVE",
+                gerais: ""
+            }
+        };
+
+        // Array para armazenar histórico
+        let historicoPartes = [];
+
+        // Chave do localStorage
+        const STORAGE_KEY = 'pmgo_partes_diarias';
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            carregarHistorico();
+            carregarTabelas();
+            atualizarVisualizacaoParte();
+            atualizarPreviewObservacoes();
+            
+            // Event listeners para as tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    this.classList.add('active');
+                    const tabId = this.dataset.tab;
+                    document.getElementById(`tab-${tabId}`).classList.add('active');
+
+                    // Se for a aba de observações, atualizar preview
+                    if (tabId === 'observacoes') {
+                        atualizarPreviewObservacoes();
+                    }
+                });
+            });
+
+            // Event listeners para inputs do cabeçalho
+            ['numeroParte', 'dataInicio', 'dataFim', 'responsavel', 'comandante'].forEach(id => {
+                document.getElementById(id).addEventListener('input', atualizarDadosCabecalho);
+            });
+
+            // Event listeners para observações (preview em tempo real)
+            document.getElementById('observacoesVeiculos').addEventListener('input', atualizarPreviewObservacoes);
+            document.getElementById('observacoesOrdens').addEventListener('input', atualizarPreviewObservacoes);
+            document.getElementById('observacoesGerais').addEventListener('input', atualizarPreviewObservacoes);
+
+            // Botão Novo Dia
+            document.getElementById('novoDia').addEventListener('click', novoDia);
+        });
+
+        // Funções para Viatura de Comando
+        function adicionarVtrComando() {
+            const militar = {
+                posto: document.getElementById('postoComando').value,
+                rg: document.getElementById('rgComando').value,
+                nome: document.getElementById('nomeComando').value,
+                funcao: document.getElementById('funcaoComando').value,
+                horario: document.getElementById('horarioComando').value,
+                ac4: "Não"
+            };
+
+            if (!militar.nome || !militar.rg) {
+                alert('Preencha pelo menos Nome de Guerra e RG!');
+                return;
+            }
+
+            dadosParteDiaria.vtrComando.push(militar);
+            carregarTabelaVtrComando();
+            atualizarVisualizacaoParte();
+            salvarNoHistorico();
+            limparFormulario('comando');
+            mostrarToast('Militar adicionado à Vtr Comando!');
+        }
+
+        function removerVtrComando(index) {
+            dadosParteDiaria.vtrComando.splice(index, 1);
+            carregarTabelaVtrComando();
+            atualizarVisualizacaoParte();
+            salvarNoHistorico();
+            mostrarToast('Registro removido!');
+        }
+
+        function carregarTabelaVtrComando() {
+            const tbody = document.getElementById('vtrComandoBody');
+            tbody.innerHTML = '';
+            
+            dadosParteDiaria.vtrComando.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${item.posto}</td>
+                    <td>${item.rg}</td>
+                    <td>${item.nome}</td>
+                    <td>${item.funcao}</td>
+                    <td>${item.horario}</td>
+                    <td><span class="badge">${item.ac4}</span></td>
+                    <td>
+                        <button onclick="removerVtrComando(${index})" class="remove-btn">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Funções para Viatura de Área
+        function adicionarVtrArea() {
+            const militar = {
+                posto: document.getElementById('postoArea').value,
+                rg: document.getElementById('rgArea').value,
+                nome: document.getElementById('nomeArea').value,
+                funcao: document.getElementById('funcaoArea').value,
+                horario: document.getElementById('horarioArea').value,
+                ac4: "Não"
+            };
+
+            if (!militar.nome || !militar.rg) {
+                alert('Preencha pelo menos Nome de Guerra e RG!');
+                return;
+            }
+
+            dadosParteDiaria.vtrArea.push(militar);
+            carregarTabelaVtrArea();
+            atualizarVisualizacaoParte();
+            salvarNoHistorico();
+            limparFormulario('area');
+            mostrarToast('Militar adicionado à Vtr Área!');
+        }
+
+        function removerVtrArea(index) {
+            dadosParteDiaria.vtrArea.splice(index, 1);
+            carregarTabelaVtrArea();
+            atualizarVisualizacaoParte();
+            salvarNoHistorico();
+            mostrarToast('Registro removido!');
+        }
+
+        function carregarTabelaVtrArea() {
+            const tbody = document.getElementById('vtrAreaBody');
+            tbody.innerHTML = '';
+            
+            dadosParteDiaria.vtrArea.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${item.posto}</td>
+                    <td>${item.rg}</td>
+                    <td>${item.nome}</td>
+                    <td>${item.funcao}</td>
+                    <td>${item.horario}</td>
+                    <td><span class="badge">${item.ac4}</span></td>
+                    <td>
+                        <button onclick="removerVtrArea(${index})" class="remove-btn">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Funções para Serviço Extra
+        function adicionarServicoExtra() {
+            const militar = {
+                posto: document.getElementById('postoExtra').value,
+                rg: document.getElementById('rgExtra').value,
+                nome: document.getElementById('nomeExtra').value,
+                funcao: document.getElementById('funcaoExtra').value,
+                horario: document.getElementById('horarioExtra').value,
+                ac4: "Não"
+            };
+
+            if (!militar.nome || !militar.rg) {
+                alert('Preencha pelo menos Nome de Guerra e RG!');
+                return;
+            }
+
+            dadosParteDiaria.servicoExtra.push(militar);
+            carregarTabelaServicoExtra();
+            atualizarVisualizacaoParte();
+            salvarNoHistorico();
+            limparFormulario('extra');
+            mostrarToast('Militar adicionado ao Serviço Extra!');
+        }
+
+        function removerServicoExtra(index) {
+            dadosParteDiaria.servicoExtra.splice(index, 1);
+            carregarTabelaServicoExtra();
+            atualizarVisualizacaoParte();
+            salvarNoHistorico();
+            mostrarToast('Registro removido!');
+        }
+
+        function carregarTabelaServicoExtra() {
+            const tbody = document.getElementById('servicoExtraBody');
+            tbody.innerHTML = '';
+            
+            dadosParteDiaria.servicoExtra.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${item.posto}</td>
+                    <td>${item.rg}</td>
+                    <td>${item.nome}</td>
+                    <td>${item.funcao}</td>
+                    <td>${item.horario}</td>
+                    <td><span class="badge">${item.ac4}</span></td>
+                    <td>
+                        <button onclick="removerServicoExtra(${index})" class="remove-btn">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Funções para Ocorrências
+        function adicionarOcorrencia() {
+            const ocorrencia = {
+                rai: document.getElementById('rai').value,
+                natureza: document.getElementById('natureza').value,
+                setor: document.getElementById('setor').value,
+                horario: document.getElementById('horarioOcorrencia').value,
+                apf: document.getElementById('apf').value || ''
+            };
+
+            if (!ocorrencia.rai || !ocorrencia.natureza) {
+                alert('Preencha RAI e Natureza da ocorrência!');
+                return;
+            }
+
+            dadosParteDiaria.ocorrencias.push(ocorrencia);
+            carregarTabelaOcorrencias();
+            atualizarVisualizacaoParte();
+            salvarNoHistorico();
+            limparFormularioOcorrencia();
+            mostrarToast('Ocorrência adicionada!');
+        }
+
+        function removerOcorrencia(index) {
+            dadosParteDiaria.ocorrencias.splice(index, 1);
+            carregarTabelaOcorrencias();
+            atualizarVisualizacaoParte();
+            salvarNoHistorico();
+            mostrarToast('Ocorrência removida!');
+        }
+
+        function carregarTabelaOcorrencias() {
+            const tbody = document.getElementById('ocorrenciasBody');
+            tbody.innerHTML = '';
+            
+            dadosParteDiaria.ocorrencias.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${item.rai}</td>
+                    <td>${item.natureza}</td>
+                    <td>${item.setor}</td>
+                    <td>${item.horario}</td>
+                    <td>${item.apf || '-'}</td>
+                    <td>
+                        <button onclick="removerOcorrencia(${index})" class="remove-btn">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Função para Produtividade
+        function salvarProdutividade() {
+            dadosParteDiaria.produtividade = {
+                patrulhamento: parseInt(document.getElementById('patrulhamento').value) || 0,
+                pontoBase: parseInt(document.getElementById('pontoBase').value) || 0,
+                averiguacao: parseInt(document.getElementById('averiguacao').value) || 0,
+                monitoramento: parseInt(document.getElementById('monitoramento').value) || 0,
+                abordagemPessoa: parseInt(document.getElementById('abordagemPessoa').value) || 0,
+                abordagemVeiculo: parseInt(document.getElementById('abordagemVeiculo').value) || 0,
+                abordagemComercio: parseInt(document.getElementById('abordagemComercio').value) || 0,
+                visitaSolidaria: parseInt(document.getElementById('visitaSolidaria').value) || 0,
+                visitaComunitaria: parseInt(document.getElementById('visitaComunitaria').value) || 0,
+                visitaHospitalar: parseInt(document.getElementById('visitaHospitalar').value) || 0,
+                pontosBloqueio: parseInt(document.getElementById('pontosBloqueio').value) || 0,
+                autoRetencao: parseInt(document.getElementById('autoRetencao').value) || 0,
+                apoioPolicial: parseInt(document.getElementById('apoioPolicial').value) || 0,
+                acomMedidas: parseInt(document.getElementById('acomMedidas').value) || 0
+            };
+            
+            atualizarVisualizacaoParte();
+            salvarNoHistorico();
+            mostrarToast('Produtividade salva!');
+        }
+
+        // Funções para Observações
+        function salvarObservacoes() {
+            dadosParteDiaria.observacoes = {
+                veiculos: document.getElementById('observacoesVeiculos').value,
+                ordens: document.getElementById('observacoesOrdens').value || "NÃO HOUVE",
+                gerais: document.getElementById('observacoesGerais').value
+            };
+            
+            atualizarVisualizacaoParte();
+            salvarNoHistorico();
+            mostrarToast('Observações salvas!');
+        }
+
+        function atualizarPreviewObservacoes() {
+            const preview = document.getElementById('observacoesPreview');
+            const veiculos = document.getElementById('observacoesVeiculos').value;
+            const ordens = document.getElementById('observacoesOrdens').value;
+            const gerais = document.getElementById('observacoesGerais').value;
+
+            preview.innerHTML = `
+                <strong>VEÍCULOS NO PÁTIO:</strong><br>
+                ${veiculos || 'Nenhuma informação'}<br><br>
+                <strong>ORDENS DE SERVIÇO:</strong><br>
+                ${ordens || 'NÃO HOUVE'}<br><br>
+                <strong>OUTRAS OBSERVAÇÕES:</strong><br>
+                ${gerais || 'Nenhuma observação adicional'}
+            `;
+        }
+
+        // Visualização da Parte Diária (versão simplificada)
+        function atualizarVisualizacaoParte() {
+            const container = document.getElementById('parteDiaria');
+            
+            let html = `
+                <div class="header-parte">
+                    <h3>ESTADO DE GOIÁS - POLÍCIA MILITAR</h3>
+                    <h4>32ª COMPANHIA INDEPENDENTE DE POLÍCIA MILITAR DO ESTADO DE GOIÁS</h4>
+                    <h2 style="margin-top: 20px; color: #0b2b5c;">PARTE DIÁRIA Nº ${dadosParteDiaria.numero || '_____'} PM/32ª CIPM-10647</h2>
+                    <p style="margin-top: 10px;"><strong>CAMPOS LINDOS - 32ª COMPANHIA INDEPENDENTE DE POLÍCIA MILITAR</strong></p>
+                </div>
+
+                <div class="info-parte">
+                    <div><strong>RESPONSÁVEL PELO SERVIÇO:</strong> ${dadosParteDiaria.responsavel || '____________________'}</div>
+                    <div><strong>DATA:</strong> ${dadosParteDiaria.dataInicio || '__/__/____'} a ${dadosParteDiaria.dataFim || '__/__/____'}</div>
+                    <div><strong>HORAS:</strong> 8:00 às 08:00h (48h)</div>
+                </div>
+
+                <h3 style="margin-top: 30px; color: #0b2b5c; border-bottom: 1px solid #cbd5e1; padding-bottom: 10px;">1. EFETIVO EMPREGADO - 2ª PELOTÃO:</h3>
+            `;
+
+            // Viatura de Comando
+            if (dadosParteDiaria.vtrComando.length > 0) {
+                html += `<h4 style="margin-top: 20px;">VIATURA DO COMANDO DO 2º PELOTÃO (EXPEDIENTE):</h4>`;
+                html += `<table style="margin-top: 10px; width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Posto/Grad.</th>
+                            <th>RG</th>
+                            <th>Nome de Guerra</th>
+                            <th>Função</th>
+                            <th>Horário/Escala</th>
+                            <th>AC4</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+                
+                dadosParteDiaria.vtrComando.forEach(item => {
+                    html += `<tr>
+                        <td>${item.posto}</td>
+                        <td>${item.rg}</td>
+                        <td>${item.nome}</td>
+                        <td>${item.funcao}</td>
+                        <td>${item.horario}</td>
+                        <td>${item.ac4}</td>
+                    </tr>`;
+                });
+                
+                html += `</tbody></table>`;
+            } else {
+                html += `<p style="margin: 20px 0; color: #64748b;">Nenhum militar registrado na Viatura de Comando.</p>`;
+            }
+
+            // Viatura de Área
+            if (dadosParteDiaria.vtrArea.length > 0) {
+                html += `<h4 style="margin-top: 30px;">VIATURA DE ÁREA:</h4>`;
+                html += `<table style="margin-top: 10px; width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Posto/Grad.</th>
+                            <th>RG</th>
+                            <th>Nome de Guerra</th>
+                            <th>Função</th>
+                            <th>Horário/Escala</th>
+                            <th>AC4</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+                
+                dadosParteDiaria.vtrArea.forEach(item => {
+                    html += `<tr>
+                        <td>${item.posto}</td>
+                        <td>${item.rg}</td>
+                        <td>${item.nome}</td>
+                        <td>${item.funcao}</td>
+                        <td>${item.horario}</td>
+                        <td>${item.ac4}</td>
+                    </tr>`;
+                });
+                
+                html += `</tbody></table>`;
+            } else {
+                html += `<p style="margin: 20px 0; color: #64748b;">Nenhum militar registrado na Viatura de Área.</p>`;
+            }
+
+            // Serviço Extra
+            if (dadosParteDiaria.servicoExtra.length > 0) {
+                html += `<h4 style="margin-top: 30px;">SERVIÇO EXTRA-REMUNERADO:</h4>`;
+                html += `<table style="margin-top: 10px; width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Posto/Grad.</th>
+                            <th>RG</th>
+                            <th>Nome de Guerra</th>
+                            <th>Função</th>
+                            <th>Horário/Escala</th>
+                            <th>AC4</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+                
+                dadosParteDiaria.servicoExtra.forEach(item => {
+                    html += `<tr>
+                        <td>${item.posto}</td>
+                        <td>${item.rg}</td>
+                        <td>${item.nome}</td>
+                        <td>${item.funcao}</td>
+                        <td>${item.horario}</td>
+                        <td>${item.ac4}</td>
+                    </tr>`;
+                });
+                
+                html += `</tbody></table>`;
+            } else {
+                html += `<p style="margin: 20px 0; color: #64748b;">Nenhum militar registrado no Serviço Extra.</p>`;
+            }
+
+            // Ocorrências
+            html += `<h3 style="margin-top: 30px; color: #0b2b5c; border-bottom: 1px solid #cbd5e1; padding-bottom: 10px;">2. OCORRÊNCIAS REGISTRADAS:</h3>`;
+            
+            if (dadosParteDiaria.ocorrencias.length > 0) {
+                html += `<table style="margin-top: 10px; width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>RAI</th>
+                            <th>Natureza</th>
+                            <th>Setor</th>
+                            <th>Horário</th>
+                            <th>APF/TCO/BOC</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+                
+                dadosParteDiaria.ocorrencias.forEach(item => {
+                    html += `<tr>
+                        <td>${item.rai}</td>
+                        <td>${item.natureza}</td>
+                        <td>${item.setor}</td>
+                        <td>${item.horario}</td>
+                        <td>${item.apf || '-'}</td>
+                    </tr>`;
+                });
+                
+                html += `</tbody></table>`;
+            } else {
+                html += `<p style="margin: 20px 0; color: #64748b;">Nenhuma ocorrência registrada.</p>`;
+            }
+
+            // Produtividade
+            html += `<h3 style="margin-top: 30px; color: #0b2b5c; border-bottom: 1px solid #cbd5e1; padding-bottom: 10px;">3. PRODUTIVIDADE:</h3>`;
+            html += `<table style="margin-top: 10px; width: 100%;">
+                <tr>
+                    <td><strong>Patrulhamento:</strong> ${dadosParteDiaria.produtividade.patrulhamento}</td>
+                    <td><strong>Visita Solidária:</strong> ${dadosParteDiaria.produtividade.visitaSolidaria}</td>
+                </tr>
+                <tr>
+                    <td><strong>Ponto Base/Ronda:</strong> ${dadosParteDiaria.produtividade.pontoBase}</td>
+                    <td><strong>Visita Comunitária:</strong> ${dadosParteDiaria.produtividade.visitaComunitaria}</td>
+                </tr>
+                <tr>
+                    <td><strong>Averiguação:</strong> ${dadosParteDiaria.produtividade.averiguacao}</td>
+                    <td><strong>Visita Hospitalar:</strong> ${dadosParteDiaria.produtividade.visitaHospitalar}</td>
+                </tr>
+                <tr>
+                    <td><strong>Monitoramento:</strong> ${dadosParteDiaria.produtividade.monitoramento}</td>
+                    <td><strong>Pontos de Bloqueio:</strong> ${dadosParteDiaria.produtividade.pontosBloqueio}</td>
+                </tr>
+                <tr>
+                    <td><strong>Abordagem à pessoa:</strong> ${dadosParteDiaria.produtividade.abordagemPessoa}</td>
+                    <td><strong>Auto de Retenção:</strong> ${dadosParteDiaria.produtividade.autoRetencao}</td>
+                </tr>
+                <tr>
+                    <td><strong>Abordagem veículo:</strong> ${dadosParteDiaria.produtividade.abordagemVeiculo}</td>
+                    <td><strong>Apoio Policial:</strong> ${dadosParteDiaria.produtividade.apoioPolicial}</td>
+                </tr>
+                <tr>
+                    <td><strong>Abordagem comércio:</strong> ${dadosParteDiaria.produtividade.abordagemComercio}</td>
+                    <td><strong>Acom. Medidas Protetivas:</strong> ${dadosParteDiaria.produtividade.acomMedidas}</td>
+                </tr>
+            </table>`;
+
+            // Observações
+            html += `<h3 style="margin-top: 30px; color: #0b2b5c; border-bottom: 1px solid #cbd5e1; padding-bottom: 10px;">4. SUGESTÕES/ OBSERVAÇÕES/ ALTERAÇÕES DO SERVIÇO:</h3>`;
+            html += `<p style="margin-top: 10px;"><strong>VEÍCULOS QUE SE ENCONTRAM NO PÁTIO</strong><br>${dadosParteDiaria.observacoes?.veiculos || 'Nenhuma informação.'}</p>`;
+            html += `<p><strong>ORDENS DE SERVIÇO:</strong> ${dadosParteDiaria.observacoes?.ordens || 'NÃO HOUVE'}</p>`;
+            
+            if (dadosParteDiaria.observacoes?.gerais) {
+                html += `<p><strong>OUTRAS OBSERVAÇÕES:</strong> ${dadosParteDiaria.observacoes.gerais}</p>`;
+            }
+
+            // Assinaturas
+            html += `<div class="signature-section">
+                <div class="signature">
+                    <p>${dadosParteDiaria.responsavel || '____________________'}<br>Comandante do Policamento do 2º Pelotão/32ª CIPM</p>
+                </div>
+                <div class="signature">
+                    <p>${dadosParteDiaria.comandante || '____________________'}<br>Comandante do 2º Pelotão/32ª CIPM</p>
+                </div>
+            </div>`;
+
+            container.innerHTML = html;
+        }
+
+        // Funções de Histórico
+        function carregarHistorico() {
+            const historicoSalvo = localStorage.getItem(STORAGE_KEY);
+            if (historicoSalvo) {
+                historicoPartes = JSON.parse(historicoSalvo);
+            }
+            atualizarTabelaHistorico();
+        }
+
+        function salvarNoHistorico() {
+            // Verificar se já existe uma parte com este ID
+            const index = historicoPartes.findIndex(p => p.id === dadosParteDiaria.id);
+            
+            const parteParaSalvar = JSON.parse(JSON.stringify(dadosParteDiaria)); // Clonar objeto
+            
+            if (index >= 0) {
+                historicoPartes[index] = parteParaSalvar;
+            } else {
+                historicoPartes.unshift(parteParaSalvar); // Adicionar no início
+            }
+            
+            // Limitar histórico a 50 itens
+            if (historicoPartes.length > 50) {
+                historicoPartes = historicoPartes.slice(0, 50);
+            }
+            
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(historicoPartes));
+            atualizarTabelaHistorico();
+        }
+
+        function atualizarTabelaHistorico() {
+            const tbody = document.getElementById('historicoBody');
+            tbody.innerHTML = '';
+            
+            historicoPartes.forEach((parte, index) => {
+                const tr = document.createElement('tr');
+                tr.className = 'historico-item';
+                tr.onclick = () => carregarParteDoHistorico(index);
+                
+                const totalEfetivo = (parte.vtrComando?.length || 0) + 
+                                    (parte.vtrArea?.length || 0) + 
+                                    (parte.servicoExtra?.length || 0);
+                
+                const isCurrentDay = parte.id === dadosParteDiaria.id;
+                
+                tr.innerHTML = `
+                    <td>${parte.dataInicio || 'Sem data'}</td>
+                    <td>${parte.numero || '---'}</td>
+                    <td>${parte.responsavel || '---'}</td>
+                    <td>${totalEfetivo}</td>
+                    <td>${parte.ocorrencias?.length || 0}</td>
+                    <td>${isCurrentDay ? '<span class="current-day-badge">Dia Atual</span>' : 'Arquivado'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            if (historicoPartes.length === 0) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = '<td colspan="6" style="text-align: center; padding: 30px;">Nenhuma parte diária salva ainda. Crie um novo dia para começar.</td>';
+                tbody.appendChild(tr);
+            }
+        }
+
+        function carregarParteDoHistorico(index) {
+            const parte = historicoPartes[index];
+            if (parte) {
+                dadosParteDiaria = JSON.parse(JSON.stringify(parte)); // Clonar para não modificar o histórico
+                
+                // Atualizar campos do cabeçalho
+                document.getElementById('numeroParte').value = dadosParteDiaria.numero || '';
+                document.getElementById('dataInicio').value = dadosParteDiaria.dataInicio || '';
+                document.getElementById('dataFim').value = dadosParteDiaria.dataFim || '';
+                document.getElementById('responsavel').value = dadosParteDiaria.responsavel || '';
+                document.getElementById('comandante').value = dadosParteDiaria.comandante || '';
+                
+                // Atualizar campos de observações
+                document.getElementById('observacoesVeiculos').value = dadosParteDiaria.observacoes?.veiculos || '';
+                document.getElementById('observacoesOrdens').value = dadosParteDiaria.observacoes?.ordens || '';
+                document.getElementById('observacoesGerais').value = dadosParteDiaria.observacoes?.gerais || '';
+                
+                // Atualizar campos de produtividade
+                document.getElementById('patrulhamento').value = dadosParteDiaria.produtividade.patrulhamento || 0;
+                document.getElementById('pontoBase').value = dadosParteDiaria.produtividade.pontoBase || 0;
+                document.getElementById('averiguacao').value = dadosParteDiaria.produtividade.averiguacao || 0;
+                document.getElementById('monitoramento').value = dadosParteDiaria.produtividade.monitoramento || 0;
+                document.getElementById('abordagemPessoa').value = dadosParteDiaria.produtividade.abordagemPessoa || 0;
+                document.getElementById('abordagemVeiculo').value = dadosParteDiaria.produtividade.abordagemVeiculo || 0;
+                document.getElementById('abordagemComercio').value = dadosParteDiaria.produtividade.abordagemComercio || 0;
+                document.getElementById('visitaSolidaria').value = dadosParteDiaria.produtividade.visitaSolidaria || 0;
+                document.getElementById('visitaComunitaria').value = dadosParteDiaria.produtividade.visitaComunitaria || 0;
+                document.getElementById('visitaHospitalar').value = dadosParteDiaria.produtividade.visitaHospitalar || 0;
+                document.getElementById('pontosBloqueio').value = dadosParteDiaria.produtividade.pontosBloqueio || 0;
+                document.getElementById('autoRetencao').value = dadosParteDiaria.produtividade.autoRetencao || 0;
+                document.getElementById('apoioPolicial').value = dadosParteDiaria.produtividade.apoioPolicial || 0;
+                document.getElementById('acomMedidas').value = dadosParteDiaria.produtividade.acomMedidas || 0;
+                
+                // Recarregar todas as tabelas
+                carregarTabelas();
+                atualizarVisualizacaoParte();
+                atualizarPreviewObservacoes();
+                
+                mostrarToast('Parte carregada do histórico!');
+                
+                // Voltar para a aba de visualização
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.querySelector('[data-tab="view"]').classList.add('active');
+                document.getElementById('tab-view').classList.add('active');
+            }
+        }
+
+        // Funções auxiliares
+        function limparFormulario(tipo) {
+            if (tipo === 'comando') {
+                document.getElementById('rgComando').value = '';
+                document.getElementById('nomeComando').value = '';
+                document.getElementById('horarioComando').value = '';
+            } else if (tipo === 'area') {
+                document.getElementById('rgArea').value = '';
+                document.getElementById('nomeArea').value = '';
+                document.getElementById('horarioArea').value = '';
+            } else if (tipo === 'extra') {
+                document.getElementById('rgExtra').value = '';
+                document.getElementById('nomeExtra').value = '';
+                document.getElementById('funcaoExtra').value = '';
+                document.getElementById('horarioExtra').value = '';
+            }
+        }
+
+        function limparFormularioOcorrencia() {
+            document.getElementById('rai').value = '';
+            document.getElementById('natureza').value = '';
+            document.getElementById('setor').value = '';
+            document.getElementById('horarioOcorrencia').value = '';
+            document.getElementById('apf').value = '';
+        }
+
+        function atualizarDadosCabecalho() {
+            dadosParteDiaria.numero = document.getElementById('numeroParte').value;
+            dadosParteDiaria.dataInicio = document.getElementById('dataInicio').value;
+            dadosParteDiaria.dataFim = document.getElementById('dataFim').value;
+            dadosParteDiaria.responsavel = document.getElementById('responsavel').value;
+            dadosParteDiaria.comandante = document.getElementById('comandante').value;
+            atualizarVisualizacaoParte();
+        }
+
+        function novoDia() {
+            // Salvar o dia atual no histórico antes de limpar
+            if (dadosParteDiaria.numero || dadosParteDiaria.vtrComando.length > 0 || dadosParteDiaria.ocorrencias.length > 0) {
+                salvarNoHistorico();
+            }
+            
+            // Criar novo ID
+            dadosParteDiaria = {
+                id: Date.now(),
+                numero: "",
+                sei: "",
+                dataInicio: "",
+                dataFim: "",
+                responsavel: "",
+                comandante: "",
+                vtrComando: [],
+                vtrArea: [],
+                servicoExtra: [],
+                ocorrencias: [],
+                produtividade: {
+                    patrulhamento: 0,
+                    pontoBase: 0,
+                    averiguacao: 0,
+                    monitoramento: 0,
+                    abordagemPessoa: 0,
+                    abordagemVeiculo: 0,
+                    abordagemComercio: 0,
+                    visitaSolidaria: 0,
+                    visitaComunitaria: 0,
+                    visitaHospitalar: 0,
+                    pontosBloqueio: 0,
+                    autoRetencao: 0,
+                    apoioPolicial: 0,
+                    acomMedidas: 0
+                },
+                observacoes: {
+                    veiculos: "",
+                    ordens: "NÃO HOUVE",
+                    gerais: ""
+                }
+            };
+            
+            // Limpar campos do cabeçalho
+            document.getElementById('numeroParte').value = '';
+            document.getElementById('dataInicio').value = '';
+            document.getElementById('dataFim').value = '';
+            document.getElementById('responsavel').value = '';
+            document.getElementById('comandante').value = '';
+            
+            // Limpar campos de observações
+            document.getElementById('observacoesVeiculos').value = '';
+            document.getElementById('observacoesOrdens').value = '';
+            document.getElementById('observacoesGerais').value = '';
+            
+            // Limpar campos de produtividade
+            document.querySelectorAll('.prod-input').forEach(input => {
+                input.value = '0';
+            });
+            
+            // Recarregar tabelas vazias
+            carregarTabelas();
+            atualizarVisualizacaoParte();
+            atualizarPreviewObservacoes();
+            atualizarTabelaHistorico();
+            
+            mostrarToast('Novo dia iniciado!');
+        }
+
+        function mostrarToast(mensagem) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<i class="fas fa-check-circle"></i> ${mensagem}`;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        function carregarTabelas() {
+            carregarTabelaVtrComando();
+            carregarTabelaVtrArea();
+            carregarTabelaServicoExtra();
+            carregarTabelaOcorrencias();
+        }
+
+        // Exportar PDF (versão simplificada)
+        document.getElementById('exportPDF').addEventListener('click', function() {
+            const element = document.getElementById('parteDiaria');
+            const opt = {
+                margin: [0.5, 0.5, 0.5, 0.5],
+                filename: `Parte_Diaria_${dadosParteDiaria.numero?.replace('/', '_') || 'sem_numero'}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, letterRendering: true },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+            
+            html2pdf().set(opt).from(element).save();
+            mostrarToast('Gerando PDF...');
+        });
+    </script>
+</body>
+</html>

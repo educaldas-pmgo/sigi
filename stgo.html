@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Escolha de Opções</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f2f7fb;
+    }
+
+    /* TOPO */
+   
+    .topo {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 20px 30px;
+      background: linear-gradient(90deg, #0b6cf2, #0f8f7a);
+      color: #fff;
+    }
+
+    .topo img {
+      width: 90px;
+      height: 90px;
+      border-radius: 16px;
+      background: #fff;
+      padding: 5px;
+    }
+
+    .topo h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .topo p {
+      margin: 4px 0 0 0;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    
+    .container {
+      padding: 40px;
+    }
+
+    select {
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .output {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      white-space: pre-wrap;
+      margin-bottom: 20px;
+      line-height: 1.9;
+      text-align: justify;
+      padding: 30px;
+      max-width: 900px;
+    }
+
+    button {
+      padding: 12px 24px;
+      background-color: #0b6cf2;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    button:hover {
+      background-color: #084bb5;
+    }
+
+    .copiado {
+      margin-left: 10px;
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOPO -->
+  <div class="topo">
+    <img src="stgo.PNG" alt="Logo PMGO">
+    <div>
+      <h1>STGO – Modelos de RAI</h1>
+      <p>Auxílio rápido para preenchimento de relatórios operacionais</p>
+    </div>
+  </div>
+
+  <div class="container">
+
+  <!-- <h1><img src="stgo.PNG" width="300" height="300"></h1> -->
+  <H4>COMO UTILIZAR ESSE SISTEMA</h4>
+  1. Escolha um modelo de ocorrência na lista abaixo<br>
+  2. Clique em COPIAR TEXTO e COLE no relato do RAI<br>
+  3. Realize as alterações necessárias<br>
+  <br><br>
+  <H3>Os modelos são apenas para auxiliar no preenchimento rápido de relatório, porém devem ser alterados de acordo com cada situação.</H3>
+
+  <select id="dropdown" onchange="mostrarTexto()">
+    <option value="">-- Escolha uma opção --</option>
+  </select>
+
+  <div id="output" class="output"></div>
+
+  <button onclick="copiarTexto()">Copiar texto</button>
+  <span id="copiadoMsg" class="copiado" style="display: none;">Copiado!</span>
+
+  <script>
+
+    const opcoes = [
+      { id: 1, label: "PATRULHAMENTO – GENÉRICO - MODELO 1", texto: "Realizado patrulhamento no horário e local devidamente qualificado no preâmbulo deste RAI, onde foi saturado todo o quadrante da área bem como as proximidades do local, promovendo o Policiamento Ostensivo e Preventivo dos locais indicados, evitando desta forma, a pratica de ações criminosas, gerando assim sensação de segurança na Comunidade local." },
+      { id: 2, label: "PATRULHAMENTO – GENÉRICO - MODELO 2", texto: "Realizado patrulhamentos e pontos de estacionamento em diversos locais no Distrito, onde foi saturado todo o quadrante da área bem como as proximidades do local, promovendo o Policiamento Ostensivo e Preventivo dos locais indicados, evitando desta forma, a prática de ações criminosas, gerando assim sensação de segurança na Comunidade local." },
+      { id: 3, label: "PATRULHAMENTO – AREA COMERCIAL BANCARIA", texto: "Realizado patrulhamento no local indicado no preâmbulo deste RAI, onde saturamos o quadrante da área comercial e bancária, inclusive com a realização de Pontos de Estacionamentos, promovendo o Policiamento Ostensivo e Preventivo destas áreas indicadas, evitando desta forma a prática de ações criminosas, gerando assim sensação de segurança na Comunidade local." },
+      { id: 4, label: "PONTO DE ESTACIONAMENTO GENÉRICO", texto: "Realizado Ponto de Estacionamento entre a 09h00min até as 10h00min, no local definido no preâmbulo deste RAI, onde saturamos o quadrante da área comercial e residencial, promovendo o Policiamento Ostensivo e Preventivo destas áreas indicadas, evitando desta forma a prática de ações criminosas, gerando assim sensação de segurança na Comunidade local." },
+      { id: 5, label: "PONTO DE ESTACIONAMENTO – BASE DE CAMPOS LINDOS", texto: "Realizado Ponto de Estacionamento em base de apoio de apoio da Policia Militar, em local definido no preâmbulo deste RAI. Tal ação se dá em caráter de manutenção e prática de educação física, bem, bem como horário para acautelamento de material, hasteamento de pavilhão nacional e troca de guarnição e de caráter excepcional tendo em vista as peculiaridades do local do Pelotão de Campos Lindos como a dificuldade de comunicação com a população de forma externa e pelo 'costume' da área de o cidadão se deslocar ate a base para realizar queixas e solicitações diversas." },
+      { id: 6, label: "ABORDAGEM A PESSOA – c/ NOME", texto: "Esta guarnição em patrulhamento pelo endereço descrito no preâmbulo deste RAI , avistou o senhor ________, em atitude suspeita pelas características e comportamento. Foi realizada abordagem policial e a conferência de documentação pessoal, contudo, nada de ilícito foi localizado.Essa abordagem foi realizada conforme o Art. 144 da Magna Carta Cabe ao Estado proteger a ordem pública, as pessoas e o patrimônio, tendo a polícia como instrumento fundamental para garantia da segurança pública. Em especial, a polícia militar possui o dever–garantia de examinar quaisquer atitudes ou pessoas suspeitas, com finalidade de prevenir eventos danosos á sociedade. Após o atendimento o individuo foi liberado no local." },
+      { id: 7, label: "ABORDAGEM A PESSOA – GENÉRICO", texto: "Em patrulhamento pelo endereço citado no preâmbulo deste RAI esta guarnição deparou-se com o indivíduo devidamente qualificado nesse registro, em atitude suspeita, devido ao horário e local onde transitava no momento.<br> Realizamos a abordagem conforme preconiza o POP, contudo nada de ilícito foi encontrado. <br>Após os procedimentos de praxe o indivíduo foi liberado no local e esta guarnição retornou ao patrulhamento de rotina com vistas a coibir e prevenir os crimes praticados naquela região." },
+      { id: 8, label: "ABORDAGEM A MOTOCICLETA/MOTOTAXISTA – GENÉRICO", texto: "Em patrulhamento pelo endereço citado no preâmbulo deste RAI esta guarnição deparou-se com um indivíduo pilotando uma motocicleta - devidamente qualificados neste registro - em atitude suspeita, devido ao horário e local onde transitava no momento. <br>Realizamos abordagem conforme preconiza o POP, feito a conferencia de documentos pessoais e da motocicleta, nada de ilícito foi encontrado. Após os procedimentos de praxe o indivíduo foi liberado no local e esta guarnição retornou ao patrulhamento de rotina com vistas a coibir e prevenir os crimes praticados naquela região." },
+      { id: 9, label: "ABORDAGEM A VEICULO – GENÉRICO", texto: "Em patrulhamento pelo endereço citado no preâmbulo deste RAI esta guarnição deparou-se com o indivíduo, devidamente qualificado nesse registro, dirigindo um veiculo – também registrado neste RAI - em atitude suspeita, devido ao horário e local onde transitava no momento. <br>Realizamos a abordagem conforme preconiza o POP abrangendo busca pessoal e logo após busca veicular; feito a conferencia de documentos pessoais e do veiculo nada de ilícito foi encontrado. Após os procedimentos de praxe o indivíduo foi liberado no local e esta guarnição retornou ao patrulhamento de rotina com vistas a coibir e prevenir os crimes praticados naquela região."},
+      { id: 10, label: "VISITA A ESCOLA", texto: "REALIZADO VISITA COMUNITÁRIA AO COLÉGIO ESTADUAL CAMPOS LINDOS CONFORME PRECONIZA O PROCEDIMENTO OPERACIONAL DA POLICIA MILITAR; ONDE FIZEMOS CONTATO COM A DIRETORA DA INSTITUIÇÃO, SENHORA ______________, FOI REALIZADO PATRULHAMENTO OSTENSIVO PREVENTIVO INTERNO FAZENDO CONTATO AMIGAVEL ENTRE PROFESSORES, DIREÇÃO E ALUNOS.<br> FORAM COLOCAMOS OS TELEFONES E SERVIÇOS DA POLICIA MILITAR LOCAL A DISPOSIÇÃO. REALIZAMOS AINDA PATRULHAMENTO NAS PROXIMIDADES DO COLÉGIO ESTADUAL E MUNICIPAL A FIM DE COIBIR PRATICAS DELITUOSAS E CRIMES COMETIDOS NAQUELA REGIÃO." },
+      { id: 11, label: "VISITA COMUNITÁRIA A COMÉRCIO", texto: "REALIZADO VISITA COMUNITÁRIA A COMÉRCIO CONFORME PRECONIZA O PROCEDIMENTO OPERACIONAL DA POLICIA MILITAR, ONDE FIZEMOS CONTATO COM O SENHOR ____________, GERENTE____________, NA REGIAO DE CAMPOS LINDOS E COLOCAMOS OS TELEFONES E SERVIÇOS DA POLICIA MILITAR LOCAL A SUA DISPOSIÇÃO, BEM COMO PARA SEUS AMIGOS E CLIENTES. REALIZAMOS AINDA PATRULHAMENTO NAS PROXIMIDADES DOS COMÉRCIOS A FIM DE COIBIR PRATICAS DELITUOSAS E CRIMES COMETIDOS NAQUELA REGIÃO." },
+      { id: 12, label: "VISITA SOLIDÁRIA", texto: "REALIZADO VISITA SOLIDÁRIA A COMÉRCIO-RESIDENCIA CONFORME PRECONIZA O PROCEDIMENTO OPERACIONAL DA POLICIA MILITAR, ONDE FIZEMOS CONTATO COM O SENHOR ____________, GERENTE/MORADOR DO ____________, NA REGIAO DE CAMPOS LINDOS E COLOCAMOS OS TELEFONES E SERVIÇOS DA POLICIA MILITAR A SUA DISPOSIÇÃO. REALIZAMOS AINDA PATRULHAMENTO NAS PROXIMIDADES DO LOCAL A FIM DE COIBIR FUTURAS PRATICAS DELITUOSAS." },
+      { id: 13, label: "VISITA COMUNITÁRIA RURAL", texto: "POR DETERMINAÇÃO DO COMANDANTE DO POLICIAMENTO DA UNIDADE ESTA GUARNIÇÃO DESLOCAMOS ATE O LOCAL DE PATRULHAMENTO DETERMINADO CONFORME CONSTA ENDEREÇO NO PREAMBULO DESTE RAI QUE FOI REALIZADO VISITA COMUNITÁRIA RURAL A FIM DE COIBIR E PREVENIR OS CRIMES COMETIDOS NAQUELA REGIÃO BEM COMO COLOCAR OS TELEFONES E OS SERVIÇOS DA POLICIA MILITAR A DISPOSIÇÃO DO PROPRIETARIO E FUNCIONÁRIOS DA PROPRIEDADE VISITADA. NADA DE ILICITO E ANORMAL FOI CONSTATADO NA VISITAS. NA OPORTUNIDADE FOI REALIZADO PATRULHAMENTO NAS IMEDIAÇÕES A FIM DE CAUSAR A SENSAÇÃO DE SEGURANÇA A COMUNIDADE LOCAL." },
+      { id: 14, label: "AVERIGUAÇÃO – GENÉRICO – VEICULO ABANDONADO SEM RESTRIÇÃO", texto: "ESTA GUARNIÇÃO FOI ACIONADA VIA FUNCIONAL PARA VERIGUAR POSSIVEL SITUAÇÃO EM QUE UM VEICULO FORA ABANDONADO AS MARGENS DA BR251. NO LOCAL FOI FEITO A BUSCA NO SISTEMA MPORTAL ONDE NADA DE ILICITO FOI LOCALIZADO REFERENTE AO CARRO. COMO NÃO HOUVE QUALQUER FATO TIPICO O VEICULO FOI DEIXADO NO LOCAL.<br> Após os procedimentos de praxe DEIXAMOS o local e esta guarnição retornou ao patrulhamento de rotina com vistas a coibir e prevenir os crimes praticados naquela região. " },
+      { id: 15, label: "OBSERVAÇÃO SOBRE AVANÇAR SINAL OU DISPOSITIVO ELETRONICO DE VELOCIDADE", texto: "Texto detalhado para a Opção 15." },
+      { id: 16, label: "PERTURBAÇÃO SEM REPRESENTAÇÃO", texto: "POR DETERMINAÇÃO DO COPOM ESTA GUARNIÇÃO DESLOCOU ATE O ENDEREÇO, CITADO NO PREAMBULO DESTE RAI, PARA AVERIGUAR POSSÍVEL SITUAÇÃO DE PERTURBAÇÃO DO SOSSEGO. NO LOCAL FOI FEITO CONTATO COM O SENHOR ____________ QUE RELATOU QUE HAVIA UMA PEQUENA FESTA EM FRENTE A SUA RESIDENCIA, MAS, COMO OS MORADORES JA HAVIAM FINALIZADO E OS CONVIDADOS DISPERSADOS, NÃO HAVIA MAIS NECESSIDADE DA INTERVENÇÃO POLICIAL, NEM O MESMO OPTOU POR REPRESENTAR CONTRA OS VIZINHOS TENDO EM VISTA O ACORDO AMIGAVEL DE CESSAR O SOM. FOI ORIENTADO AO SOLICITANTE, CASO A PERTURBAÇÃO PERMANECESSE, QUE ENTRASSE EM CONTATO COM A POLÍCIA NOVAMENTE PARA REALIZAR OS PROCEDIMENTOS DE PRAXE.<br> NÃO HAVENDO MAIS NADA PARA O MOMENTO ESTA GUARNIÇÃO RETORNOU AO PATRULHAMENTO NAS PROXIMIDADES." },
+      { id: 17, label: "AVERIGUAÇÃO – MARIA DA PENHA SEM LOCALIZAR O AGRESSOR E SEM REPRESENTAÇÃO", texto: "POR DETERMINAÇÃO DO COPOM, DESLOCAMOS ATÉ O ENDEREÇO CITADO NO PREAMBULO DESTE RAI, QUE A COMUNICANTE SANDRA INFORMA ESTAR SENDO AGREDIDA PELO MARIDO. FOI REALIZADO PATRULHAMENTO EM TODA __________. DEVIDO A DIFICULDADE DE LOCALIZAR ENDEREÇOS NO REFERIDO LOCAL, FOI NOS DADO REFERENCIAS COMO ,__PORTÃO VERMELHO__, E__, PORÉM NÃO FOI LOCALIZADO. FOI REALIZADO PATRULHAMENTO NO LOCAL E NAS IMEDIAÇÕES DE FORMA A COIBIR POSSÍVEIS PRÁTICAS DELITUOSAS. NÃO HAVENDO MAIS NADA A SE FAZER NO MOMENTO, ESTA GUARNIÇÃO RETORNOU AO PATRULHAMENTO DE ROTINA, AGUARDANDO POSSÍVEL CONTATO, CASO FOSSE NECESSÁRIO." },
+      { id: 18, label: "AVERIGUAÇÃO SOM ALTO", texto: "Através de denuncia anônima via funcional deslocamos ate o endereço citado no preambulo deste RAI para averiguar possível situação de perturbação do sossego.<br>No local foi feito contato com o proprietário da residência que utilizava o equipamento de som de sua casa de maneira excessivamente alta e orientamos sobre a infração que estaria cometendo caso permanecesse na conduta.<br>Por se tratar de primeira vez no local, foram utilizados os meios educativos verbais como forma de advertência para o fato. <br>O morador foi orientado de seus direitos e deveres para com a sociedade e o mesmo se comprometeu a colaborar com a segurança pública promovendo o bem estar social através de suas novas atitudes condizentes com o decoro social. <br>Registra-se para os devidos fins." },
+      { id: 19, label: "FORAGIDO RECAPTURADO ", texto: "Em patrulhamento pelo endereço citado no preâmbulo deste RAI esta guarnição deparou-se com um indivíduo em uma motocicleta em atitude suspeita por apresentar nervosismo quando da passagem e monitoramento policial. Realizamos a abordagem conforme preconiza o POP e, verificado os documentos pessoais, de CNH e do veículo que estavam dentro do prazo de validade e conforme o código de transito, porém ao verificar junto ao sistema MPortal e BNMP foi constatado que o individuo, ___________ estava com mandado de prisão em aberto, sob o numero _________________ TJGO, conforme consta consulta em anexo. O autor foi conduzido a delegacia de Cristalina-GO e apresentado ao delegado plantonista para serem tomadas as devidas providencias que o caso requer." },
+      { id: 20, label: "OBSERVAÇÃO SOBRE AVANÇAR SINAL OU DISPOSITIVO ELETRONICO DE VELOCIDADE", texto: "OBS.: REGISTRA-SE QUE, DEVIDO A URGÊNCIA NA OCORRÊNCIA RELATADA NA DESCRIÇÃO DESTE RAI, FOI NECESSÁRIO O DESLOCAMENTO EM VELOCIDADE SUPERIOR A ESTABELECIDA PELA VIA, POSSIVELMENTE CONSTATADA/REGISTRADA POR FISCALIZAÇÃO ELETRÕNICA DE VELOCIDADE EM ALGUM PONTO DA CIDADE ENTRE OS HORÁRIOS DE ______ E ______ DO REFERIDO DIA."
+      
+    }
+    ];
+
+    const dropdown = document.getElementById("dropdown");
+    const output = document.getElementById("output");
+    const copiadoMsg = document.getElementById("copiadoMsg");
+
+    opcoes.forEach(opcao => {
+      const option = document.createElement("option");
+      option.value = opcao.id;
+      option.textContent = opcao.label;
+      dropdown.appendChild(option);
+    });
+
+    function mostrarTexto() {
+      const selectedId = parseInt(dropdown.value);
+      const opcaoSelecionada = opcoes.find(o => o.id === selectedId);
+
+      output.innerText = opcaoSelecionada ? opcaoSelecionada.texto : "";
+      copiadoMsg.style.display = "none";
+    }
+
+    function copiarTexto() {
+      const texto = output.innerText;
+      if (!texto) return;
+
+      navigator.clipboard.writeText(texto).then(() => {
+        copiadoMsg.style.display = "inline";
+      });
+    }
+  </script>
+
+  </div>
+
+</body>
+</html>

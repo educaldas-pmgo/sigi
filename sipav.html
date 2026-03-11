@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIPAV - Sistema Integrado do Pátio Veicular</title>
+
+<!-- Biblioteca para PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<style>
+/* ================= ESTILO GERAL ================= */
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  background:#eef7f1;
+  
+}
+
+header{
+  background:#0b5d3c;
+  color:white;
+  padding:15px;
+  text-align:center;
+  font-size:22px;
+}
+
+.container{
+  padding:20px;
+  max-width:900px;
+  margin:auto;
+}
+
+.hidden{display:none !important}
+
+.card{
+  background:white;
+  padding:20px;
+  margin-bottom:20px;
+  border-radius:10px;
+  box-shadow:0 0 8px rgba(0,0,0,0.15);
+}
+
+.form-small{
+  max-width:400px;
+  margin:auto;
+}
+
+.logo-space{
+  width:100%;
+  height:200px;
+  margin-bottom:20px;
+  background:#d9f2e4;
+  border:2px dashed #2f9e72;
+  text-align:center;
+  line-height:200px;
+  color:#2f9e72;
+}
+
+input,select,textarea,button{
+  padding:5px;
+  margin:6px 0;
+  width:95%;
+  border-radius:6px;
+  border:1px solid #7fc8a9;
+}
+
+button{
+  background:#220550;
+  color:white;
+  border:none;
+  cursor:pointer;
+  width: 100%;
+}
+
+button:hover{
+  background:#238b61;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th,td{
+  border:1px solid #ccc;
+  padding:8px;
+  text-align:center;
+}
+
+th{
+  background:#c3fae8;
+}
+
+.alert{
+  background:#ffe3e3;
+  border-left:5px solid red;
+  padding:8px;
+  margin-bottom:5px;
+}
+
+/* ================= MODAIS ================= */
+.modal{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.6);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+
+.modal-content{
+  background:white;
+  padding:20px;
+  border-radius:8px;
+  width:90%;
+  max-width:500px;
+}
+</style>
+</head>
+
+<body>
+
+<header>SIPAV - Sistema Integrado do Pátio Veicular</header>
+
+<!-- ================= LOGIN ================= -->
+<div class="container" id="loginArea">
+
+  <!-- ESPAÇO PARA LOGO (200x800) -->
+  <center><img src="sipav1.png" width="430" height="250"></center>
+  <!-- <div class="logo-space">LOGO 800x200</div> -->
+
+  <form class="card form-small" onsubmit="login(); return false;">
+    <h3>Login</h3>
+    <input id="loginUser" placeholder="Usuário">
+    <input id="loginPass" type="password" placeholder="Senha">
+    <button type="submit">Entrar</button>
+    <p id="loginMsg"></p>
+  </form>
+</div>
+
+<!-- ================= SISTEMA ================= -->
+<div class="container hidden" id="appArea">
+
+<h3>Usuário: <span id="userAtual"></span></h3>
+<button onclick="logout()">Sair</button>
+
+<div id="alerts"></div>
+
+<!-- ================= CADASTRO ================= -->
+<div class="card">
+<h2>Cadastrar Veículo</h2>
+
+<div style="display:flex; gap:20px; flex-wrap:wrap;">
+
+  <!-- COLUNA VEÍCULO -->
+  <div style="flex:1; min-width:280px;">
+
+    <h4>Dados do Veículo</h4>
+
+    <input id="placa" placeholder="Placa" oninput="this.value = this.value.toUpperCase()">
+    <input id="marca" placeholder="Marca / Modelo" oninput="this.value = this.value.toUpperCase()">
+    <input id="cor" placeholder="Cor" oninput="this.value = this.value.toUpperCase()">
+    <input id="ano" placeholder="Ano">
+    <input id="chassi" placeholder="Chassi" oninput="this.value = this.value.toUpperCase()">
+    <input id="motor" placeholder="Motor" oninput="this.value = this.value.toUpperCase()">
+
+  </div>
+
+  <!-- COLUNA APREENSÃO -->
+  <div style="flex:1; min-width:280px;">
+
+    <h4>Dados da Apreensão</h4>
+
+    <input id="data" type="date">
+    <input id="hora" type="time">
+    <input id="local" placeholder="Local"  oninput="this.value = this.value.toUpperCase()">
+    <input id="motivo" placeholder="Motivo"  oninput="this.value = this.value.toUpperCase()">
+    <input id="rai" placeholder="Nº RAI">
+    <input id="ar" placeholder="Nº AR">
+    <select id="agente">
+
+  <option value="">Selecione o Agente</option>
+  <option>ST Lopes</option>
+  <option>3º Sgt Hebert</option>
+  <option>2º Sgt Ivan</option>
+  <option>2º Sgt Craveiro</option>
+  <option>2º Sgt Anisio</option>
+  <option>3º Sgt Rodrigo</option>
+  <option>3º Sgt Leopoldino</option>
+  <option>3º Sgt Caldas</option>
+  <option>3º Sgt Brandão</option>
+  <option>3º Sgt Honielly</option>
+  <option>Cb André</option>
+  <option>Cb Joaquim</option>
+  <option>Outro</option>
+</select>
+
+  </div>
+
+</div>
+
+<h4>Foto</h4>
+<input type="file" id="foto">
+
+<button onclick="salvarVeiculo()">Salvar Veículo</button>
+</div>
+
+<!-- ================= LISTAGEM ================= -->
+<div class="card">
+<h3>Veículos Cadastrados</h3>
+
+<button onclick="gerarPDF()">Gerar PDF</button>
+<!-- <button onclick="backup()">Backup</button> -->
+
+<table id="tabela">
+<thead>
+<tr>
+<th>Selecionar</th>
+<th>Placa</th>
+<th>Data</th>
+<th>Status</th>
+<th>Local</th>
+<th>Último Usuário</th>
+<th>Ações</th>
+</tr>
+</thead>
+<tbody id="lista"></tbody>
+</table>
+</div>
+
+</div>
+
+<!-- ================= MODAIS ================= -->
+
+<div class="modal hidden" id="modalDetalhe">
+<div class="modal-content">
+<h3>Detalhes do Veículo</h3>
+<div id="detalhes"></div>
+<br>
+<button onclick="fecharModais()">Fechar</button>
+</div>
+</div>
+
+<div class="modal hidden" id="modalLiberar">
+<div class="modal-content">
+<h3>Liberar Veículo</h3>
+<input id="libPara" placeholder="Liberado para">
+<!-- <input id="libPor" placeholder="Liberado por"> -->
+<select id="libPor" placeholder="Liberado por">
+  <option value="">Selecione o Agente</option>
+  <option>ST Lopes</option>
+  <option>3º Sgt Hebert</option>
+  <option>2º Sgt Ivan</option>
+  <option>2º Sgt Craveiro</option>
+  <option>2º Sgt Anisio</option>
+  <option>3º Sgt Rodrigo</option>
+  <option>3º Sgt Leopoldino</option>
+  <option>3º Sgt Caldas</option>
+  <option>3º Sgt Brandão</option>
+  <option>3º Sgt Honielly</option>
+  <option>Cb André</option>
+  <option>Cb Joaquim</option>
+  <option>Outro</option>
+</select>
+<button onclick="confirmarLiberacao()">Confirmar</button>
+<button onclick="fecharModais()">Cancelar</button>
+</div>
+</div>
+
+<div class="modal hidden" id="modalTransferir">
+<div class="modal-content">
+<h3>Transferir Veículo</h3>
+<input id="destino" placeholder="Destino">
+<input id="sei" placeholder="Nº SEI">
+<button onclick="confirmarTransferencia()">Confirmar</button>
+<button onclick="fecharModais()">Cancelar</button>
+</div>
+</div>
+
+<script>
+/* =====================================================
+   INICIALIZAÇÃO DO SISTEMA (ANTI-BUG)
+===================================================== */
+
+document.addEventListener("DOMContentLoaded", iniciarSistema);
+document.getElementById("data").valueAsDate = new Date();
+
+
+function iniciarSistema(){
+
+  // Garante que tudo comece fechado
+  document.getElementById("loginArea").classList.remove("hidden");
+  document.getElementById("appArea").classList.add("hidden");
+
+
+  fecharModais();
+
+  usuarioLogado = null;
+  veiculoSelecionado = null;
+}
+
+/* =====================================================
+   VARIÁVEIS
+===================================================== */
+
+const loginArea = document.getElementById("loginArea");
+const appArea   = document.getElementById("appArea");
+
+const lista  = document.getElementById("lista");
+const alerts = document.getElementById("alerts");
+
+let usuarioLogado = null;
+let veiculoSelecionado = null;
+
+/* =====================================================
+   USUÁRIOS PADRÃO
+===================================================== */
+
+let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [
+  {u:"ADMIN",p:"123123"},
+  {u:"op1",p:"123"},
+  {u:"op2",p:"123"},
+  {u:"sup1",p:"123"}
+];
+
+/* =====================================================
+   BASE DE DADOS
+===================================================== */
+
+let veiculos = JSON.parse(localStorage.getItem("veiculos")) || [];
+
+/* =====================================================
+   SALVAR LOCALSTORAGE
+===================================================== */
+
+function salvarBanco(){
+  localStorage.setItem("veiculos",JSON.stringify(veiculos));
+  localStorage.setItem("usuarios",JSON.stringify(usuarios));
+}
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+function login(){
+
+  const u = document.getElementById("loginUser").value;
+  const p = document.getElementById("loginPass").value;
+
+  const achou = usuarios.find(x=>x.u===u && x.p===p);
+
+  if(!achou){
+    document.getElementById("loginMsg").innerText="Login inválido";
+    return;
+  }
+
+  usuarioLogado = achou.u;
+
+  document.getElementById("userAtual").innerText = usuarioLogado;
+
+  loginArea.classList.add("hidden");
+  appArea.classList.remove("hidden");
+
+  fecharModais();
+  render();
+}
+
+function logout(){
+  iniciarSistema();
+}
+
+/* =====================================================
+   CADASTRO
+===================================================== */
+
+function salvarVeiculo(){
+
+  const file = document.getElementById("foto").files[0];
+  const reader = new FileReader();
+
+  reader.onload = function(){
+
+    const v = {
+      placa: placa.value,
+      marca: marca.value,
+      cor: cor.value,
+      ano: ano.value,
+      chassi: chassi.value,
+      motor: motor.value,
+
+      data: data.value,
+      hora: hora.value,
+      local: local.value,
+      motivo: motivo.value,
+      rai: rai.value,
+      ar: ar.value,
+      agente: agente.value,
+
+      foto: this.result || null,
+
+      status: "Pátio",
+      liberacao: null,
+      transferencia: null,
+
+      ultimoUsuario: usuarioLogado,
+      criadoEm: new Date().toLocaleString()
+    };
+
+    veiculos.push(v);
+
+    salvarBanco();
+    limparFormulario();
+    render();
+  };
+
+  if(file){
+    reader.readAsDataURL(file);
+  }else{
+    reader.onload();
+  }
+}
+
+function limparFormulario(){
+
+  document.querySelectorAll("#appArea input").forEach(i=>{
+    if(i.type!=="file") i.value="";
+  });
+
+  document.getElementById("foto").value="";
+}
+
+/* =====================================================
+   LISTAGEM
+===================================================== */
+
+function render(){
+
+  lista.innerHTML="";
+  alerts.innerHTML="";
+
+  const hoje = new Date();
+
+  veiculos.forEach((v,i)=>{
+
+    if(v.status==="Pátio" && v.data){
+
+      const d = new Date(v.data);
+      const dias = (hoje-d)/86400000;
+
+      if(dias>30){
+        alerts.innerHTML += `<div class="alert">${v.placa} há ${Math.floor(dias)} dias no pátio</div>`;
+      }
+    }
+
+    lista.innerHTML += `
+      <tr>
+        <td><input type="radio" name="selectVeiculo" onclick="selecionarVeiculo(${i})"></td>
+        <td><a href="#" onclick="verDetalhes(${i})">${v.placa}</a></td>
+        <td>${v.data||""}</td>
+        <td>${v.status}</td>
+        <td>${v.local||""}</td>
+        <td>${v.ultimoUsuario}</td>
+        <td>
+          <button onclick="abrirLiberar(${i})">Liberar</button>
+          <button onclick="abrirTransferir(${i})">Transferir</button>
+          <button onclick="excluirVeiculo(${i})">Excluir</button>
+        </td>
+      </tr>`;
+  });
+}
+
+/* =====================================================
+   DETALHES
+===================================================== */
+
+function verDetalhes(i){
+
+  veiculoSelecionado = i; // <-- AQUI resolve o problema
+
+  const v = veiculos[i];
+
+detalhes.innerHTML = `
+  <b>Placa:</b> ${v.placa}<br>
+  <b>Marca:</b> ${v.marca}<br>
+  <b>Cor:</b> ${v.cor}<br>
+  <b>Ano:</b> ${v.ano}<br>
+  <b>Chassi:</b> ${v.chassi}<br>
+  <b>Motor:</b> ${v.motor}<br><hr>
+
+  <b>Data:</b> ${v.data} ${v.hora}<br>
+  <b>Local:</b> ${v.local}<br>
+  <b>Motivo:</b> ${v.motivo}<br>
+  <b>RAI:</b> ${v.rai}<br>
+  <b>AR:</b> ${v.ar}<br>
+  <b>Agente:</b> ${v.agente}<br><hr>
+
+  <b>Status:</b> ${v.status}<br>
+  <b>Liberado:</b> ${v.liberacao||"-"}<br>
+  <b>Transferido:</b> ${v.transferencia||"-"}<br><br>
+
+  ${
+    v.foto 
+    ? `<img src="${v.foto}" style="max-width:100%;border:1px solid #ccc;border-radius:6px">`
+    : "<i>Sem foto cadastrada</i>"
+  }
+`;
+
+
+  modalDetalhe.classList.remove("hidden");
+}
+
+
+/* =====================================================
+   LIBERAR / TRANSFERIR / EXCLUIR
+===================================================== */
+
+function abrirLiberar(i){
+  veiculoSelecionado = i;
+  document.getElementById("modalLiberar").classList.remove("hidden");
+}
+
+function confirmarLiberacao(){
+
+  const v = veiculos[veiculoSelecionado];
+
+  v.status = "Liberado";
+  v.liberacao = `Para: ${libPara.value} / Por: ${libPor.value}`;
+  v.ultimoUsuario = usuarioLogado;
+
+  salvarBanco();
+  fecharModais();
+  render();
+}
+
+function abrirTransferir(i){
+  veiculoSelecionado = i;
+  document.getElementById("modalTransferir").classList.remove("hidden");
+}
+
+function confirmarTransferencia(){
+
+  const v = veiculos[veiculoSelecionado];
+
+  v.status = "Transferido";
+  v.transferencia = `Destino: ${destino.value} / SEI: ${sei.value}`;
+  v.ultimoUsuario = usuarioLogado;
+
+  salvarBanco();
+  fecharModais();
+  render();
+}
+
+function excluirVeiculo(){
+
+  if(veiculoSelecionado === null){
+    alert("Nenhum veículo selecionado.");
+    return;
+  }
+
+  if(!confirm("Tem certeza que deseja excluir este cadastro?")){
+    return;
+  }
+
+  veiculos.splice(veiculoSelecionado, 1);
+
+  salvarBanco();
+  fecharModais();
+  render();
+
+  veiculoSelecionado = null;
+}
+
+function selecionarVeiculo(i){
+  veiculoSelecionado = i;
+}
+
+/* =====================================================
+   MODAIS
+===================================================== */
+
+function fecharModais(){
+
+  document.getElementById("modalDetalhe").classList.add("hidden");
+  document.getElementById("modalLiberar").classList.add("hidden");
+  document.getElementById("modalTransferir").classList.add("hidden");
+}
+
+/* =====================================================
+   PDF
+===================================================== */
+function gerarPDF(){
+
+  if(veiculos.length === 0){
+    alert("Nenhum veículo cadastrado.");
+    return;
+  }
+
+  let html = `
+  <html>
+  <head>
+    <title>Relatório SIPAV</title>
+
+    <style>
+
+      body{
+        font-family:Arial;
+        padding:20px;
+      }
+
+      h2{
+        text-align:center;
+        color:#0b5d3c;
+      }
+
+      .texto-padrao{
+        margin:20px 0;
+        padding:15px;
+        border:1px solid #ccc;
+        background:#f5fdf9;
+      }
+
+      table{
+        width:100%;
+        border-collapse:collapse;
+        font-size:12px;
+      }
+
+      th,td{
+        border:1px solid #999;
+        padding:6px;
+        text-align:center;
+      }
+
+      th{
+        background:#c3fae8;
+      }
+
+    </style>
+
+  </head>
+
+  <body>
+
+  <h2>SIPAV - Relatório de Veículos</h2>
+
+  <!-- TEXTO PADRÃO EDITÁVEL -->
+  <div class="texto-padrao">
+    <!-- <b>Cristalina-GO, </b><br><br> -->
+    Ao Senhor,</BR>
+    Divino Vander Pereira dos Santos - 1º Tenente PM</BR>
+    Subcomandante da 32º Companhia Independente da Polícia Militar / Cristalina-GO</BR>
+    5º Comando Regional de Polícia Militar do Estado de Goiás</BR></BR>
+
+    Assunto: Transferência de veículo do pátio do 2º Pelotão de Campos Lindos para o Pátio da 32º CIPM em Cristalina-GO.</BR></BR>
+
+  Caro Subcomandante,</BR></BR>
+
+  Encaminhamos, para conhecimento e providências, a relação de motocicletas devidamente identificadas e relacionadas conforme quadro anexo, a fim de que sejam recebidas e mantidas sob guarda em pátio próprio, permanecendo à disposição para os devidos fins que a justiça ou administração pública vier a determinar conforme cada caso.  </div>
+
+  <table>
+
+    <thead>
+      <tr>
+        <th>Placa</th>
+        <th>Marca</th>
+        <th>Cor</th>
+        <th>Ano</th>
+        <th>Data</th>
+        <th>Local</th>
+        <th>Motivação</th>
+        <th>RAI</th>
+        <th>AR</th>
+        <th>Agente</th>
+        <th>Status</th>
+        <th>Usuário</th>
+      </tr>
+    </thead>
+
+    <tbody>
+  `;
+
+  veiculos.forEach(v=>{
+
+    html += `
+      <tr>
+        <td>${v.placa||""}</td>
+        <td>${v.marca||""}</td>
+        <td>${v.cor||""}</td>
+        <td>${v.ano||""}</td>
+        <td>${v.data||""}</td>
+        <td>${v.local||""}</td>
+        <td>${v.motivo||""}</td>
+        <td>${v.rai||""}</td>
+        <td>${v.ar||""}</td>
+        <td>${v.agente||""}</td>
+        <td>${v.status||""}</td>
+        <td>${v.ultimoUsuario||""}</td>
+      </tr>
+    `;
+
+  });
+
+  html += `
+    </tbody>
+  </table>
+
+    </br>
+    <p align="right">Campos Lindos, Cristalina-GO, </p>
+    </p>
+    </br></br>
+    Respeitosamente, </br></br>
+    
+    <p align="center"> Luiz Marcos Nunes LOPES  - ST PM</br>
+    Comandante do 2º Pelotão/32ª CIPM</p>
+
+
+  <br><br>
+
+  <center>
+    <button onclick="window.print()">Gerar Documento SEI / Salvar em PDF</button>
+  </center>
+
+  </body>
+  </html>
+  `;
+
+  // ABRE NOVA JANELA
+  const win = window.open("");
+
+  win.document.write(html);
+  win.document.close();
+
+}
+
+
+
+/* =====================================================
+   BACKUP
+===================================================== */
+
+function backup(){
+
+  const dados = {usuarios,veiculos};
+
+  const blob = new Blob([JSON.stringify(dados)],{type:"application/json"});
+
+  const a = document.createElement("a");
+
+  a.href = URL.createObjectURL(blob);
+  a.download = "backup_sipav.json";
+  a.click();
+}
+
+document.addEventListener("keydown", e => e.key === "Escape" && fecharModais());
+
+
+</script>
+
+<!-- AREA OCULTA PARA GERAR PDF -->
+<div id="pdfArea" style="position:fixed; left:-9999px; top:0; width:1000px;"></div>
+
+
+
+
+</body>
+</html>

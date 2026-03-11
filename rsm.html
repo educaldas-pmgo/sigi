@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema RSM Digital</title>
+
+    <!-- =========================
+         ESTILO (CSS)
+         Responsável pela aparência
+         ========================= -->
+    <style>
+
+        /* Configuração geral da página */
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Cabeçalho com logo */
+        header {
+            background-color: #1f2933;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Container principal */
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Botões */
+        button {
+            padding: 12px 20px;
+            margin: 10px;
+            border: none;
+            background-color: #2563eb;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #1e40af;
+        }
+
+        /* Esconder telas */
+        .hidden {
+            display: none;
+        }
+
+        /* Campos do formulário */
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        /* Tabela da pesquisa */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #2563eb;
+            color: white;
+        }
+
+        /* Mensagens */
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- =========================
+     CABEÇALHO / LOGO
+     ========================= -->
+<header>
+    <h1>📘 Sistema RSM Digital</h1>
+    <p>Registro de Saída e Manutenção de Viaturas</p>
+</header>
+
+
+<!-- =========================
+     TELA INICIAL
+     ========================= -->
+<div class="container" id="telaInicial">
+
+    <h2>Bem-vindo</h2>
+
+    <p>
+        Utilize este sistema para cadastrar e consultar registros
+        de responsabilidade e cautela de viaturas.
+    </p>
+
+    <button onclick="mostrarCadastro()">📘 Cadastrar RSM</button>
+    <button onclick="mostrarPesquisa()">🔍 Pesquisar RSM</button>
+
+</div>
+
+
+<!-- =========================
+     TELA DE CADASTRO
+     ========================= -->
+<div class="container hidden" id="telaCadastro">
+
+    <h2>Cadastro de RSM</h2>
+
+    <form id="formRSM">
+
+        <!-- Viatura -->
+        <label>Viatura / Marca / Modelo</label>
+        <select id="viatura" required>
+            <option value="">Selecione</option>
+            <option>VTR 01 - Gol Branco</option>
+            <option>VTR 02 - Duster Preta</option>
+            <option>VTR 03 - Hilux</option>
+            <option>VTR 04 - Spin</option>
+        </select>
+
+        <!-- Datas e Horas -->
+        <label>Data Inicial</label>
+        <input type="date" id="dataInicial" required>
+
+        <label>Hora Inicial</label>
+        <input type="time" id="horaInicial" required>
+
+        <label>Data Final</label>
+        <input type="date" id="dataFinal" required>
+
+        <label>Hora Final</label>
+        <input type="time" id="horaFinal" required>
+
+        <!-- Quilometragem -->
+        <label>KM Inicial</label>
+        <input type="number" id="kmInicial" required>
+
+        <label>KM Final</label>
+        <input type="number" id="kmFinal" required>
+
+        <!-- Limpeza -->
+        <label>Limpeza</label>
+        <select id="limpeza" required>
+            <option value="">Selecione</option>
+            <option>Sim</option>
+            <option>Não</option>
+        </select>
+
+        <!-- Alterações -->
+        <label>Alterações</label>
+        <textarea id="alteracoes" rows="3"></textarea>
+
+        <!-- Termo -->
+        <input type="checkbox" id="termo" required>
+        <label>
+            Certifico que a viatura acima especificada foi entregue conforme dados informados neste Termo.
+        </label>
+
+        <br><br>
+
+        <!-- Motorista -->
+        <label>Motorista</label>
+        <input type="text" id="motorista" required>
+
+        <!-- RGPM -->
+        <label>RGPM</label>
+        <input type="number" id="rgpm" required>
+
+        <button type="submit">💾 Salvar RSM</button>
+        <button type="button" onclick="voltarInicio()">⬅ Voltar</button>
+
+    </form>
+
+    <p id="mensagem"></p>
+
+</div>
+
+
+<!-- =========================
+     TELA DE PESQUISA
+     ========================= -->
+<div class="container hidden" id="telaPesquisa">
+
+    <h2>Pesquisa de RSM</h2>
+
+    <!-- Campo de busca -->
+    <label>Pesquisar por Nome ou Data</label>
+    <input type="text" id="campoBusca" onkeyup="buscarRSM()">
+
+    <!-- Tabela -->
+    <table>
+        <thead>
+            <tr>
+                <th>Viatura</th>
+                <th>Data Inicial</th>
+                <th>Motorista</th>
+                <th>RGPM</th>
+                <th>Limpeza</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody id="tabelaRSM"></tbody>
+    </table>
+
+    <button onclick="voltarInicio()">⬅ Voltar</button>
+
+</div>
+
+
+<!-- =========================
+     JAVASCRIPT (LÓGICA)
+     ========================= -->
+<script>
+
+/* =========================
+   CONTROLE DE TELAS
+   ========================= */
+
+function mostrarCadastro() {
+    esconderTudo();
+    document.getElementById("telaCadastro").classList.remove("hidden");
+}
+
+function mostrarPesquisa() {
+    esconderTudo();
+    document.getElementById("telaPesquisa").classList.remove("hidden");
+    carregarTabela();
+}
+
+function voltarInicio() {
+    esconderTudo();
+    document.getElementById("telaInicial").classList.remove("hidden");
+}
+
+function esconderTudo() {
+    document.getElementById("telaInicial").classList.add("hidden");
+    document.getElementById("telaCadastro").classList.add("hidden");
+    document.getElementById("telaPesquisa").classList.add("hidden");
+}
+
+
+/* =========================
+   SALVAR RSM
+   ========================= */
+
+document.getElementById("formRSM").addEventListener("submit", function(event) {
+
+    // Evita recarregar a página
+    event.preventDefault();
+
+    // Cria objeto com dados
+    let rsm = {
+        viatura: viatura.value,
+        dataInicial: dataInicial.value,
+        horaInicial: horaInicial.value,
+        dataFinal: dataFinal.value,
+        horaFinal: horaFinal.value,
+        kmInicial: kmInicial.value,
+        kmFinal: kmFinal.value,
+        limpeza: limpeza.value,
+        alteracoes: alteracoes.value,
+        motorista: motorista.value,
+        rgpm: rgpm.value
+    };
+
+    // Busca dados existentes
+    let lista = JSON.parse(localStorage.getItem("rsm")) || [];
+
+    // Adiciona novo registro
+    lista.push(rsm);
+
+    // Salva novamente
+    localStorage.setItem("rsm", JSON.stringify(lista));
+
+    // Mensagem
+    mensagem.textContent = "RSM salvo com sucesso!";
+    mensagem.className = "success";
+
+    // Limpa formulário
+    formRSM.reset();
+});
+
+
+/* =========================
+   CARREGAR TABELA
+   ========================= */
+
+function carregarTabela() {
+
+    let lista = JSON.parse(localStorage.getItem("rsm")) || [];
+
+    let tabela = document.getElementById("tabelaRSM");
+
+    tabela.innerHTML = "";
+
+    lista.forEach(function(rsm, index) {
+
+        let linha = tabela.insertRow();
+
+        linha.insertCell().textContent = rsm.viatura;
+        linha.insertCell().textContent = rsm.dataInicial;
+        linha.insertCell().textContent = rsm.motorista;
+        linha.insertCell().textContent = rsm.rgpm;
+        linha.insertCell().textContent = rsm.limpeza;
+
+        // Botão excluir
+        let botao = document.createElement("button");
+        botao.textContent = "🗑 Excluir";
+        botao.onclick = function() {
+            excluirRSM(index);
+        };
+
+        linha.insertCell().appendChild(botao);
+
+    });
+}
+
+
+/* =========================
+   BUSCA
+   ========================= */
+
+function buscarRSM() {
+
+    let termo = campoBusca.value.toLowerCase();
+
+    let lista = JSON.parse(localStorage.getItem("rsm")) || [];
+
+    let tabela = document.getElementById("tabelaRSM");
+
+    tabela.innerHTML = "";
+
+    lista.forEach(function(rsm, index) {
+
+        if (
+            rsm.motorista.toLowerCase().includes(termo) ||
+            rsm.dataInicial.includes(termo)
+        ) {
+
+            let linha = tabela.insertRow();
+
+            linha.insertCell().textContent = rsm.viatura;
+            linha.insertCell().textContent = rsm.dataInicial;
+            linha.insertCell().textContent = rsm.motorista;
+            linha.insertCell().textContent = rsm.rgpm;
+            linha.insertCell().textContent = rsm.limpeza;
+
+            let botao = document.createElement("button");
+            botao.textContent = "🗑 Excluir";
+            botao.onclick = function() {
+                excluirRSM(index);
+            };
+
+            linha.insertCell().appendChild(botao);
+        }
+    });
+}
+
+
+/* =========================
+   EXCLUIR RSM
+   ========================= */
+
+function excluirRSM(index) {
+
+    if (!confirm("Deseja realmente excluir este registro?")) {
+        return;
+    }
+
+    let lista = JSON.parse(localStorage.getItem("rsm"));
+
+    lista.splice(index, 1);
+
+    localStorage.setItem("rsm", JSON.stringify(lista));
+
+    carregarTabela();
+}
+
+</script>
+
+</body>
+</html>

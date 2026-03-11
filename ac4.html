@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Cálculo de AC Crack</title>
+
+<style>
+/* =========================
+   RESET E BASE
+========================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #eef5f9;
+    color: #1f2d3d;
+}
+
+/* ========================= TOPO / HEADER ========================= */
+
+header {
+    height: 200px;
+    background: linear-gradient(to right, #0d6efd, #198754);
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 0 40px; }
+    
+    /* Barra branca */
+    header::before {
+        content: "";
+        position: absolute;
+        bottom: 45px; left: 0;
+        width: 100%; height: 10px;
+        background: #ffffff; }
+        
+    /* Barra verde */
+    header::after {
+        content: "";
+        position: absolute; bottom: 30px; left: 0; width: 100%; height: 10px;
+        background: #198754; }
+    
+    .header-content { display: flex; align-items: center; gap: 30px; z-index: 1; }
+    
+    /* Imagem 150x150 */
+    .logo {
+        width: 180px; height: 180px; object-fit: contain; background: #ffffff;
+        border-radius: 12px; padding: 1px; }
+
+/* =========================
+   CONTEÚDO
+========================= */
+main {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+/* =========================
+   FORMULÁRIO
+========================= */
+form {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    margin-bottom: 30px;
+}
+
+label {
+    margin-top: 15px;
+    display: block;
+    font-weight: 600;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin-top: 6px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+/* =========================
+   BOTÕES
+========================= */
+button {
+    margin-top: 20px;
+    padding: 14px;
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-add { background: linear-gradient(to right, #198754, #0d6efd); color: white; }
+.btn-calc { background: #0d6efd; color: white; }
+.btn-clear { background: #6c757d; color: white; }
+.btn-print { background: #198754; color: white; }
+.btn-calc-voltar { background: #0d6efd; color: white; width: 220px;}
+
+/* =========================
+   TABELA
+========================= */
+table {
+    width: 100%;
+    background: white;
+    border-radius: 16px;
+    border-collapse: collapse;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+th {
+    background: #0d6efd;
+    color: white;
+    padding: 12px;
+}
+
+td {
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+/* =========================
+   RESULTADO
+========================= */
+.resultado {
+    margin-top: 20px;
+    background: #e9f7f0;
+    padding: 20px;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    color: #198754;
+}
+
+/* =========================
+   IMPRESSÃO
+========================= */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    #relatorio, #relatorio * {
+        visibility: visible;
+    }
+
+    #relatorio {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="header-content">
+        <img src="crack.png" class="logo">
+        <div class="header-text">
+            <h1>Cálculo de AC Crack</h1>
+            <p>Controle preciso da sua hora extra</p>
+        </div>
+    </div>
+</header>
+
+<main>
+
+<button onclick="window.location.href='index.html'" class="btn-calc-voltar">
+Voltar para Aplicativos SIGI
+</button>
+</br></br>
+
+<form id="formExtras">
+    <label>Nome do policial</label>
+    <input type="text" id="nomePolicial" required>
+
+    <label>Data do serviço</label>
+    <input type="date" id="dataServico" required>
+
+    <label>Dia da semana</label>
+    <select id="diaSemana">
+        <option value="domingo">Domingo</option>
+        <option value="segunda">Segunda-feira</option>
+        <option value="terca">Terça-feira</option>
+        <option value="quarta">Quarta-feira</option>
+        <option value="quinta">Quinta-feira</option>
+        <option value="sexta">Sexta-feira</option>
+        <option value="sabado">Sábado</option>
+    </select>
+
+    <label>Hora de entrada</label>
+    <input type="time" id="horaEntrada" required>
+
+    <label>Hora de saída</label>
+    <input type="time" id="horaSaida" required>
+
+    <button type="button" class="btn-add" onclick="adicionarExtra()">Adicionar serviço extra</button>
+</form>
+
+<!-- RELATÓRIO -->
+<div id="relatorio">
+    <h2 id="tituloRelatorio"></h2>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Data</th>
+            <th>Dia</th>
+            <th>Entrada</th>
+            <th>Saída</th>
+            <th>Horas</th>
+            <th>Valor (R$)</th>
+            <th>Excluir</th>
+        </tr>
+        </thead>
+        <tbody id="tabelaExtras"></tbody>
+    </table>
+
+    <div class="resultado" id="resultadoFinal"></div>
+</div>
+
+<button class="btn-calc" onclick="calcularTotal()">Calcular horas extras</button>
+<button class="btn-print" onclick="imprimirRelatorio()">Imprimir relatório (PDF)</button>
+<button class="btn-clear" onclick="limparTudo()">Limpar informações</button>
+
+</main>
+
+<script>
+const tabelaValores = {
+    domingo: { diurno: 36.41, noturno: 41.38 },
+    segunda: { diurno: 26.47, noturno: 29.80 },
+    terca: { diurno: 26.47, noturno: 29.80 },
+    quarta: { diurno: 26.47, noturno: 29.80 },
+    quinta: { diurno: 26.47, noturno: 29.80 },
+    sexta: { diurno: 36.41, noturno: 41.38 },
+    sabado: { diurno: 36.41, noturno: 41.38 }
+};
+
+let totalGeral = 0;
+
+function adicionarExtra() {
+    const data = dataServico.value;
+    const dia = diaSemana.value;
+    const entrada = horaEntrada.value;
+    const saida = horaSaida.value;
+
+    let ini = toMin(entrada);
+    let fim = toMin(saida);
+    if (fim <= ini) fim += 1440;
+
+    let valor = 0;
+    let minutos = 0;
+
+    for (let m = ini; m < fim; m++) {
+        const r = m % 1440;
+        const periodo = (r >= 1320 || r <= 300) ? "noturno" : "diurno";
+        valor += tabelaValores[dia][periodo] / 60;
+        minutos++;
+    }
+
+    totalGeral += valor;
+
+    const tr = tabelaExtras.insertRow();
+    tr.insertCell(0).innerText = data.split("-").reverse().join("/");
+    tr.insertCell(1).innerText = dia;
+    tr.insertCell(2).innerText = entrada;
+    tr.insertCell(3).innerText = saida;
+    tr.insertCell(4).innerText = (minutos / 60).toFixed(2);
+    tr.insertCell(5).innerText = "R$ " + valor.toFixed(2);
+
+
+    // NOVO: botão excluir
+const acao = tr.insertCell(6);
+acao.innerHTML = `<button onclick="excluirLinha(this, ${valor})"
+    style="background:#dc3545;color:white;padding:6px 10px;border:none;border-radius:6px;cursor:pointer;">
+    Excluir
+</button>`;
+
+    horaEntrada.value = "";
+    horaSaida.value = "";
+}
+
+function toMin(h) {
+    const [a,b] = h.split(":");
+    return a * 60 + Number(b);
+}
+
+function calcularTotal() {
+    tituloRelatorio.innerText = "Relatório de AC4 de  – " + nomePolicial.value;
+    resultadoFinal.innerText =
+        `Total a receber: R$ ${totalGeral.toFixed(2)}`;
+}
+
+function imprimirRelatorio() {
+    window.print();
+}
+
+function limparTudo() {
+    location.reload();
+}
+
+ // Função - botão excluir
+function excluirLinha(botao, valor) {
+    if (!confirm("Deseja excluir este serviço extra?")) return;
+
+    const linha = botao.parentElement.parentElement;
+    linha.remove();
+
+    totalGeral -= valor;
+
+    resultadoFinal.innerText = 
+        `Total a receber: R$ ${totalGeral.toFixed(2)}`;
+}
+
+
+</script>
+
+</body>
+</html>

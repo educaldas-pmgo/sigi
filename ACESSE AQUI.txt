@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <!-- Define o conjunto de caracteres para português -->
+    <meta charset="UTF-8">
+
+    <!-- Ajusta para dispositivos móveis -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Título que aparece na aba do navegador -->
+    <title>Sistemas Integrados - Segurança Pública</title>
+
+    <!-- Estilo interno da página -->
+    <style>
+
+        /* ===========================
+           CONFIGURAÇÕES GERAIS
+        ============================ */
+
+        /* Remove margens padrão do navegador */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Estilo geral do corpo */
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f2f8fb;
+            color: #222;
+            min-height: 100vh;
+
+            /* Organiza o layout em coluna */
+            display: flex;
+            flex-direction: column;
+        }
+
+
+        /* ===========================
+           ÁREA DA LOGOMARCA
+        ============================ */
+
+        header {
+            background: linear-gradient(to right, #0d6efd, #198754);
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Imagem da logo */
+        .logo {
+            width: 800px;
+            max-width: 100%;
+            height: 200px;
+            object-fit: contain;
+            background-color: white;
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+
+        /* ===========================
+           ÁREA PRINCIPAL
+        ============================ */
+
+        main {
+            flex: 1;
+            padding: 40px 20px;
+        }
+
+        /* Container dos blocos */
+        .container {
+            max-width: 1200px;
+            margin: auto;
+
+            /* Grid em colunas */
+            display: grid;
+
+            /* 4 colunas no desktop */
+            grid-template-columns: repeat(4, 1fr);
+
+            gap: 20px;
+        }
+
+
+        /* ===========================
+           BLOCOS DOS SISTEMAS
+        ============================ */
+
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
+            padding: 20px;
+            text-align: center;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            transition: 0.3s;
+        }
+
+        /* Efeito ao passar o mouse */
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        /* Imagem do bloco */
+        .card img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 2px solid #0d6efd;
+        }
+
+        /* Título do sistema */
+        .card h2 {
+            color: #0d6efd;
+            margin-bottom: 10px;
+        }
+
+        /* Texto descritivo */
+        .card p {
+            font-size: 14px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        /* Botão de acesso */
+        .card a {
+            text-decoration: none;
+
+            background-color: #198754;
+            color: white;
+
+            padding: 10px 20px;
+            border-radius: 6px;
+
+            font-weight: bold;
+
+            transition: 0.3s;
+        }
+
+        /* Efeito no botão */
+        .card a:hover {
+            background-color: #146c43;
+        }
+
+
+        /* ===========================
+           RODAPÉ
+        ============================ */
+
+        footer {
+            background-color: #0d6efd;
+            color: white;
+            text-align: center;
+
+            padding: 20px;
+
+            font-size: 14px;
+        }
+
+        footer a {
+            color: #aef4c7;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+
+        /* ===========================
+           RESPONSIVIDADE
+        ============================ */
+
+        /* Tablets */
+        @media (max-width: 992px) {
+            .container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Celulares */
+        @media (max-width: 600px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+    <!-- ===========================
+         CABEÇALHO / LOGO
+    ============================ -->
+    <header>
+
+        <!-- Logo principal (800x200) -->
+        <!-- Substitua "logo.png" pela sua imagem real -->
+        <img src="logo.png" alt="Logomarca do Sistema" class="logo">
+
+    </header>
+
+
+    <!-- ===========================
+         CONTEÚDO PRINCIPAL
+    ============================ -->
+    <main>
+
+        <div class="container">
+
+            <!-- ===================
+                 BLOCO 1 - SIPAV
+            ==================== -->
+            <div class="card">
+
+                <!-- Imagem 200x200 -->
+                <img src="sipav.png" alt="Sistema SIPAV">
+
+                <!-- Título -->
+                <h2>Sistema SIPAV</h2>
+
+                <!-- Descrição -->
+                <p>
+                    Sistema de Prevenção à Violência, responsável pelo registro,
+                    acompanhamento e análise de ocorrências sensíveis.
+                </p>
+
+                <!-- Botão -->
+                <a href="sipav.html">Acessar</a>
+
+            </div>
+
+
+            <!-- ===================
+                 BLOCO 2 - RSM
+            ==================== -->
+            <div class="card">
+
+                <img src="rsm.png" alt="Sistema RSM">
+
+                <h2>Sistema RSM</h2>
+
+                <p>
+                    Registro de Situações de Monitoramento,
+                    utilizado para controle interno, estatísticas
+                    e gestão operacional.
+                </p>
+
+                <a href="rsm.html">Acessar</a>
+
+            </div>
+
+
+            <!-- ===================
+                 BLOCO 3 - GERADOR
+            ==================== -->
+            <div class="card">
+
+                <img src="ocorrencias.png" alt="Gerador de Ocorrências">
+
+                <h2>Gerador de Ocorrências</h2>
+
+                <p>
+                    Ferramenta para criação automática de boletins,
+                    relatórios e documentos operacionais.
+                </p>
+
+                <a href="ocorrencias.html">Acessar</a>
+
+            </div>
+
+
+            <!-- ===================
+                 BLOCO 4 - RESERVA
+            ==================== -->
+            <div class="card">
+
+                <img src="outro.png" alt="Outro Sistema">
+
+                <h2>Outro Sistema</h2>
+
+                <p>
+                    Espaço reservado para futuros módulos,
+                    integrações ou painéis administrativos.
+                </p>
+
+                <a href="#">Em Breve</a>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- ===========================
+         RODAPÉ
+    ============================ -->
+    <footer>
+
+        <p>
+            © 2026 - Sistemas Integrados de Segurança Pública
+        </p>
+
+        <p>
+            Desenvolvido por Eduardo | 
+            <a href="#">Suporte</a> |
+            <a href="#">Documentação</a> |
+            <a href="#">Contato</a>
+        </p>
+
+    </footer>
+
+
+</body>
+</html>

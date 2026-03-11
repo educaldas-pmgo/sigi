@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistemas Integrados - Segurança Pública</title>
+
+    <style>
+        /* =========================
+           RESET E BASE
+        ========================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background-color: #eef5f9;
+            color: #1f2d3d;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* =========================
+           TOPO / HEADER
+        ========================== */
+        header {
+            height: 200px;
+            width: 100%;
+            background: linear-gradient(to right, #0d6efd, #198754);
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 0 40px;
+        }
+
+        /* Faixas decorativas */
+        header::before {
+            content: "";
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background-color: white;
+        }
+
+        header::after {
+            content: "";
+            position: absolute;
+            bottom: 35px;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background-color: #198754;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            z-index: 1;
+        }
+
+        /* Logo 150x150 */
+        .logo {
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+            background-color: white;
+            border-radius: 12px;
+            padding: 10px;
+        }
+
+        .header-text h1 {
+            color: white;
+            font-size: 36px;
+            letter-spacing: 1px;
+        }
+
+        .header-text p {
+            color: #e6f2ec;
+            font-size: 16px;
+            margin-top: 8px;
+        }
+
+        /* =========================
+           CONTEÚDO PRINCIPAL
+        ========================== */
+        main {
+            flex: 1;
+            padding: 50px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+        }
+
+        /* =========================
+           CARDS DOS SISTEMAS
+        ========================== */
+        .card {
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            text-align: center;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .card img {
+            width: 160px;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 3px solid #0d6efd;
+        }
+
+        .card h2 {
+            color: #0d6efd;
+            margin-bottom: 12px;
+            font-size: 20px;
+        }
+
+        .card p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #444;
+            margin-bottom: 25px;
+        }
+
+        .card a {
+            text-decoration: none;
+            background: linear-gradient(to right, #198754, #0d6efd);
+            color: white;
+            padding: 12px 26px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .card a:hover {
+            opacity: 0.9;
+            transform: scale(1.03);
+        }
+
+        /* =========================
+           RODAPÉ
+        ========================== */
+        footer {
+            background-color: #0d6efd;
+            color: white;
+            text-align: center;
+            padding: 25px;
+            font-size: 14px;
+        }
+
+        footer a {
+            color: #b6f2d2;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* =========================
+           RESPONSIVIDADE
+        ========================== */
+        @media (max-width: 992px) {
+            .container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                height: auto;
+                padding: 30px 20px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+    <header>
+        <div class="header-content">
+            <img src="logo.png" alt="Logo do Sistema" class="logo">
+
+            <div class="header-text">
+                <h1>SIGI - Sistema Integrado de Gerenciamento Interno</h1>
+                <p>Sistemas Inteligentes para gerenciamento do serviço policial</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- =========================
+         CONTEÚDO
+    ========================== -->
+    <main>
+        <div class="container">
+
+            <div class="card">
+                <img src="sipav.png" alt="SIPAV">
+                <h2>Sistema SIPAV</h2>
+                <p>
+                    Prevenção à violência e acompanhamento de ocorrências sensíveis.
+                </p>
+                <a href="sipav.html">Acessar</a>
+            </div>
+
+            <div class="card">
+                <img src="rsm.png" alt="RSM">
+                <h2>Sistema RSM</h2>
+                <p>
+                    Registro e monitoramento para controle interno e estatísticas.
+                </p>
+                <a href="rsm.html">Acessar</a>
+            </div>
+
+            <div class="card">
+                <img src="ocorrencias.png" alt="Ocorrências">
+                <h2>Gerador de Ocorrências</h2>
+                <p>
+                    Criação automática de boletins e documentos operacionais.
+                </p>
+                <a href="stgo.html">Acessar</a>
+            </div>
+
+            <div class="card">
+                <img src="crack.png" alt="AC Crack">
+                <h2>AC Crack</h2>
+                <p>
+                    Cálculo preciso e oficial das horas extras remuneradas.
+                </p>
+                <a href="ac4.html">Calcular agora</a>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- =========================
+         RODAPÉ
+    ========================== -->
+    <footer>
+        <p>© 2026 - Sistemas Integrados de Gerenciamento Interno - SIGI - Campos Lindos</p>
+        <p>
+            Desenvolvido por 3º Sgt PM Caldas |
+            <a href="#">Suporte</a> |
+            <a href="#">Documentação</a> |
+            <a href="#">Contato</a>
+        </p>
+    </footer>
+
+</body>
+</html>
